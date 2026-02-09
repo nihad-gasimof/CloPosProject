@@ -13,6 +13,15 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Core\CloPosProject.Application\CloPosProject.Application.csproj" />
     <ProjectReference Include="..\..\Infrastructure\CloPosProject.Infrastructure\CloPosProject.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\CloPosProject.Persistence\CloPosProject.Persistence.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.23" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers\" />
   </ItemGroup>
 
 </Project>
