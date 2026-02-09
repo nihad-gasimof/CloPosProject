@@ -11,6 +11,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.23" />
+    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.3.9" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Infrastructure\CloPosProject.Infrastructure\CloPosProject.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Infrastructure\CloPosProject.Persistence\CloPosProject.Persistence.csproj" />
   </ItemGroup>

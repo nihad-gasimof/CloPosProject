@@ -9,6 +9,6 @@
     <Project Path="src/Infrastructure/CloPosProject.Persistence/CloPosProject.Persistence.csproj" />
   </Folder>
   <Folder Name="/src/Presentation/">
-    <Project Path="src/Presentation/CloPosProject.WebApi/CloPosProject.WebApi.csproj" />
+    <Project Path="src/Prensentation/CloPosProject.WebApi/CloPosProject.WebApi.csproj" Id="6f059dd2-1de9-45a9-8339-34c126700fc1" />
   </Folder>
 </Solution>
