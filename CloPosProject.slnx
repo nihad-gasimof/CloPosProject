@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Core/">
+    <Project Path="src/Core/CloPosProject.Application/CloPosProject.Application.csproj" />
+    <Project Path="src/Core/CloPosProject.Domain/CloPosProject.Domain.csproj" />
+  </Folder>
+  <Folder Name="/src/Infrastructure/">
+    <Project Path="src/Infrastructure/CloPosProject.Infrastructure/CloPosProject.Infrastructure.csproj" />
+    <Project Path="src/Infrastructure/CloPosProject.Persistence/CloPosProject.Persistence.csproj" />
+  </Folder>
+  <Folder Name="/src/Presentation/">
+    <Project Path="src/Presentation/CloPosProject.WebApi/CloPosProject.WebApi.csproj" />
+  </Folder>
+</Solution>

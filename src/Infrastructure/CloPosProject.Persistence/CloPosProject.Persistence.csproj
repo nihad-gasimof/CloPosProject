@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Concurate\Services\" />
+    <Folder Include="Concurate\Repositories\" />
+    <Folder Include="Configurations\" />
+    <Folder Include="Contexts\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\CloPosProject.Application\CloPosProject.Application.csproj" />
+  </ItemGroup>
+
+</Project>
