@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Concurate\Services\" />
-    <Folder Include="Concurate\Repositories\" />
     <Folder Include="Configurations\" />
     <Folder Include="Contexts\" />
   </ItemGroup>

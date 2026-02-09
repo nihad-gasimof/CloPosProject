@@ -10,7 +10,6 @@
     <Folder Include="Commands\Handlers\" />
     <Folder Include="DTOs\" />
     <Folder Include="Abstraction\Services\" />
-    <Folder Include="Abstraction\Repositories\" />
     <Folder Include="Validators\" />
     <Folder Include="Queries\" />
   </ItemGroup>
