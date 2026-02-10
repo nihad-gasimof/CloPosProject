@@ -7,11 +7,28 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Concurate\Services\" />
-    <Folder Include="Configurations\" />
+    <Compile Remove="Configurations\**" />
+    <EmbeddedResource Remove="Configurations\**" />
+    <None Remove="Configurations\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Configurations\CategoryConfiguration.cs" />
+    <Compile Include="Configurations\IngredientConfiguration.cs" />
+    <Compile Include="Configurations\InventoryConfiguration.cs" />
+    <Compile Include="Configurations\InventoryTransactionConfiguration.cs" />
+    <Compile Include="Configurations\MenuItemConfiguration.cs" />
+    <Compile Include="Configurations\OrderConfiguration.cs" />
+    <Compile Include="Configurations\OrderItemConfiguration.cs" />
+    <Compile Include="Configurations\PaymentConfiguration.cs" />
+    <Compile Include="Configurations\ReservationConfiguration.cs" />
+    <Compile Include="Configurations\SettingsConfiguration.cs" />
+    <Compile Include="Configurations\TableConfiguration.cs" />
+    <Compile Include="Configurations\UserConfiguration.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.9" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.23" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.23" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.23">

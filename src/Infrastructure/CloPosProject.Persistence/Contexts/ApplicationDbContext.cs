@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace CloPosProject.Persistence.Contexts
 {
-    public class ApplicationDbContext : IdentityDbContext<AppUser>
+    public class ApplicationDbContext : IdentityDbContext<User>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {

@@ -18,7 +18,7 @@ namespace CloPosProject.Domain.Entities
         public decimal UnitPrice { get; private set; }
         public decimal TotalPrice => Quantity * UnitPrice;
 
-        public int UserId { get; private set; }
+        public string UserId { get; private set; }
         public User User { get; private set; }
 
         public string SupplierName { get; private set; }

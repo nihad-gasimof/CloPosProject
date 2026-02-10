@@ -9,7 +9,9 @@ using System.Threading.Tasks;
 
 namespace CloPosProject.Domain.Entities
 {
-    public class AppUser :IdentityUser
+    public class User :IdentityUser
     {
+        public string Name { get; set; }
+        public string Surname { get; set; }
     }
 }

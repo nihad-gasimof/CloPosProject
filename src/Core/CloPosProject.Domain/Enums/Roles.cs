@@ -12,5 +12,6 @@ namespace CloPosProject.Domain.Enums
         Waiter,
         Kitchen,
         Warehouse,
+        Member
     }
 }
