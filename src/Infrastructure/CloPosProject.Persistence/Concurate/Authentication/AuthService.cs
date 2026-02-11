@@ -17,29 +17,37 @@ namespace CloPosProject.Persistence.Concurate.Authentication
         private readonly IJwtGenerator _jwtGenerator;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User>     _signinmanager;
-        public AuthService(IJwtGenerator jwtGenerator, UserManager<User> userManager, SignInManager<User> signinmanager)
+        private readonly IRefreshTokenService _refreshTokenService;
+        public AuthService(IJwtGenerator jwtGenerator, UserManager<User> userManager, SignInManager<User> signinmanager, IRefreshTokenService refreshTokenService)
         {
             _jwtGenerator = jwtGenerator;
             _userManager = userManager;
             _signinmanager = signinmanager;
+            _refreshTokenService = refreshTokenService;
         }
 
-        public async Task<Response<string>> LoginAsync(LoginDto loginDto)
+        public async Task<Response<AuthResponseDto>> LoginAsync(LoginDto loginDto)
             {
             if(string.IsNullOrEmpty(loginDto.Email) || string.IsNullOrEmpty(loginDto.Password))
             {
-                return Response<string>.Fail("Email və şifrə daxil edilməlidir.", 400);
+                return Response<AuthResponseDto>.Fail("Email və şifrə daxil edilməlidir.", 400);
             }
                 var user = await _userManager.FindByEmailAsync(loginDto.Email);
                 if (user == null)
-                    return Response<string>.Fail("Email və ya şifrə səhvdir.", 400);
+                    return Response<AuthResponseDto>.Fail("Email və ya şifrə səhvdir.", 400);
 
                 var result = await _signinmanager.CheckPasswordSignInAsync(user, loginDto.Password, false);
                 if (!result.Succeeded)
-                    return Response<string>.Fail("Email və ya şifrə səhvdir.", 400);
+                    return Response<AuthResponseDto>.Fail("Email və ya şifrə səhvdir.", 400);
                 
                 var token = await _jwtGenerator.GenerateToken(user);
-                return Response<string>.Success(token,201);
+            var refreshtoken= await _refreshTokenService.CreateAsync(user);
+             AuthResponseDto tokenDto = new AuthResponseDto
+            {
+                AccessToken = token,
+                RefreshToken = refreshtoken.Token
+            };
+            return Response<AuthResponseDto>.Success(tokenDto,201);
             }
 
             public async Task<Response<string>> RegisterAsync(RegisterDto registerDto)

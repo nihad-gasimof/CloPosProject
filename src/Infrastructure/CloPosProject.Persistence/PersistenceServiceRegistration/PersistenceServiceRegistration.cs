@@ -1,0 +1,37 @@
+﻿using CloPosProject.Application.Abstract.Authentication;
+using CloPosProject.Domain.Entities;
+using CloPosProject.Persistence.Concurate.Authentication;
+using CloPosProject.Persistence.Contexts;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CloPosProject.Persistence.PersistenceServiceRegistration
+{
+    public static class PersistenceServiceRegistration
+    {
+        public static void AddPersistenceServices(this IServiceCollection services, IConfiguration configuration)
+        {
+           services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddIdentity<User, IdentityRole>(opt =>
+            {
+                opt.Password.RequireDigit = true;
+                opt.Password.RequireLowercase = true;
+                opt.Password.RequireUppercase = true;
+                opt.Password.RequireNonAlphanumeric = true;
+                opt.Password.RequiredLength = 6;
+                opt.User.RequireUniqueEmail = true;
+
+            }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+        }
+    }
+}

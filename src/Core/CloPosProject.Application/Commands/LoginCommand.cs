@@ -9,5 +9,5 @@ using System.Threading.Tasks;
 
 namespace CloPosProject.Application.Commands
 {
-    public record LoginCommand(LoginDto LoginDto) : IRequest<Response<string>> { }
+    public record LoginCommand(LoginDto LoginDto) : IRequest<Response<AuthResponseDto>> { }
 }
