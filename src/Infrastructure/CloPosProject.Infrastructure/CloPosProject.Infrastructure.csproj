@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\CloPosProject.Application\CloPosProject.Application.csproj" />
+    <ProjectReference Include="..\CloPosProject.Persistence\CloPosProject.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,6 @@
 ﻿using CloPosProject.Application.Abstract.Authentication;
 using CloPosProject.Application.BaseResponseModel;
+using CloPosProject.Application.DTOs.Authentication;
 using CloPosProject.Application.Exceptions.Common;
 using MediatR;
 using System;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace CloPosProject.Application.Commands.Handler
 {
-    public class LoginCommandHandler : IRequestHandler<LoginCommand, Response<string>>
+    public class LoginCommandHandler : IRequestHandler<LoginCommand, Response<AuthResponseDto>>
     {
         private readonly IAuthService _authService;
 
@@ -19,7 +20,7 @@ namespace CloPosProject.Application.Commands.Handler
             _authService = authService;
         }
 
-        public async Task<Response<string>> Handle(LoginCommand request, CancellationToken cancellationToken)
+        public async Task<Response<AuthResponseDto>> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
             if (request is null)
             {

@@ -10,7 +10,7 @@ namespace CloPosProject.Application.Abstract.Authentication
 {
     public interface IAuthService
     {
-        Task<Response<string>> LoginAsync(LoginDto loginDto);
+        Task<Response<AuthResponseDto>> LoginAsync(LoginDto loginDto);
         Task<Response<string>> RegisterAsync(RegisterDto registerDto);
     }
 }

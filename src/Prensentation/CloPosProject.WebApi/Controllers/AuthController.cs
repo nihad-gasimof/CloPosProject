@@ -46,6 +46,14 @@ namespace CloPosProject.WebApi.Controllers
         //    }
         //    return new SimpleResponse<string>("Ugurla rollar yaradildi",roles.First());
         //}
+        [ProducesResponseType(typeof(Response<AuthResponseDto>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(Response<AuthResponseDto>), StatusCodes.Status400BadRequest)]
+        [HttpPost("RefreshToken")]
+        public async Task<IActionResult> RefreshToken([FromForm] string token)
+        {
+            var result = await _mediator.Send(new RefreshTokenCommand(token));
+            return Ok(result);
 
+        }
     }
 }

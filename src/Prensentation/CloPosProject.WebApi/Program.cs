@@ -1,9 +1,12 @@
 ﻿using CloPosProject.Application.Abstract.Authentication;
+using CloPosProject.Application.ApplicationServiceRegistration;
 using CloPosProject.Application.Commands;
 using CloPosProject.Domain.Entities;
 using CloPosProject.Infrastructure.Concurate.Authentication;
+using CloPosProject.Infrastructure.InfrastructureServiceRegistration;
 using CloPosProject.Persistence.Concurate.Authentication;
 using CloPosProject.Persistence.Contexts;
+using CloPosProject.Persistence.PersistenceServiceRegistration;
 using CloPosProject.WebApi.Middleware.GlobalExceptionHandling;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -18,11 +21,10 @@ var configuration = builder.Configuration;
 
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddMediatR(x => x.RegisterServicesFromAssembly(typeof(RegisterCommand).Assembly));
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IJwtGenerator, JwtGenerator>();
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddApplicationServices();
+builder.Services.AddPersistenceServices(configuration);
+builder.Services.AddInfrastructureServices();
 
 builder.Services.AddAuthentication(opt =>
 {
@@ -42,17 +44,6 @@ builder.Services.AddAuthentication(opt =>
     };
 });
 builder.Services.AddAuthorization();
-
-builder.Services.AddIdentity<User, IdentityRole>(opt =>
-{
-    opt.Password.RequireDigit = true;
-    opt.Password.RequireLowercase = true;
-    opt.Password.RequireUppercase = true;
-    opt.Password.RequireNonAlphanumeric = true;
-    opt.Password.RequiredLength = 6;
-    opt.User.RequireUniqueEmail = true;
-
-}).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("DefaultCorsPolicy", policy =>
@@ -62,7 +53,6 @@ builder.Services.AddCors(options =>
               .AllowAnyOrigin();
     });
 });
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
