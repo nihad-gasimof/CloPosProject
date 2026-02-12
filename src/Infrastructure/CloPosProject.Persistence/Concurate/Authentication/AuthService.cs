@@ -2,11 +2,13 @@
 using CloPosProject.Application.BaseResponseModel;
 using CloPosProject.Application.DTOs.Authentication;
 using CloPosProject.Domain.Entities;
+using CloPosProject.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.JavaScript;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,13 +19,11 @@ namespace CloPosProject.Persistence.Concurate.Authentication
         private readonly IJwtGenerator _jwtGenerator;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User>     _signinmanager;
-        private readonly IRefreshTokenService _refreshTokenService;
-        public AuthService(IJwtGenerator jwtGenerator, UserManager<User> userManager, SignInManager<User> signinmanager, IRefreshTokenService refreshTokenService)
+        public AuthService(IJwtGenerator jwtGenerator, UserManager<User> userManager, SignInManager<User> signinmanager)
         {
             _jwtGenerator = jwtGenerator;
             _userManager = userManager;
             _signinmanager = signinmanager;
-            _refreshTokenService = refreshTokenService;
         }
 
         public async Task<Response<AuthResponseDto>> LoginAsync(LoginDto loginDto)
@@ -36,18 +36,19 @@ namespace CloPosProject.Persistence.Concurate.Authentication
                 if (user == null)
                     return Response<AuthResponseDto>.Fail("Email və ya şifrə səhvdir.", 400);
 
-                var result = await _signinmanager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+                var result = await _signinmanager.PasswordSignInAsync(user, loginDto.Password, false,false);
                 if (!result.Succeeded)
                     return Response<AuthResponseDto>.Fail("Email və ya şifrə səhvdir.", 400);
                 
-                var token = await _jwtGenerator.GenerateToken(user);
-            var refreshtoken= await _refreshTokenService.CreateAsync(user);
-             AuthResponseDto tokenDto = new AuthResponseDto
-            {
-                AccessToken = token,
-                RefreshToken = refreshtoken.Token
-            };
-            return Response<AuthResponseDto>.Success(tokenDto,201);
+            var claims=(await _userManager.GetClaimsAsync(user)).ToList();
+            claims.Add(new Claim("Role", Roles.Member.ToString()));
+            claims.Add(new Claim("Fullname", user.Name + " " + user.Surname));
+           
+
+            var token = _jwtGenerator.GenerateToken(claims);
+           
+            
+            return Response<AuthResponseDto>.Success(token,201);
             }
 
             public async Task<Response<string>> RegisterAsync(RegisterDto registerDto)
@@ -88,7 +89,23 @@ namespace CloPosProject.Persistence.Concurate.Authentication
 
                 return Response<string>.Success(user.Id, 201);
             }
-        }
+        //private async Task<List<Claim>> _createClaimsAsync(User user)
+        //{
+        //    await _userManager.RemoveClaimsAsync(user, await _userManager.GetClaimsAsync(user));
+
+        //    var claims = new List<Claim>
+        //{
+        //    new Claim("Id", user.Id.ToString()),
+        //    new Claim("Email", user.Email!),
+        //    new Claim("Role", Roles.Admin.ToString()),
+        //    new Claim("Fullname", user.Name + " " + user.Surname),
+        //};
+
+        //    await _userManager.AddClaimsAsync(user, claims);
+
+        //    return claims;
+        //}
+    }
 
     }
 

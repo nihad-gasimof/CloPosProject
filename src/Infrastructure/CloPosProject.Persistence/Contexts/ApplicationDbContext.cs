@@ -12,7 +12,6 @@ namespace CloPosProject.Persistence.Contexts
         }
 
         public DbSet<Order>? Orders { get; set; }
-        public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<OrderItem>? OrderItems { get; set; }
         public DbSet<MenuItem>? MenuItems { get; set; }
         public DbSet<Category>? Categories { get; set; }

@@ -527,7 +527,7 @@ namespace CloPosProject.Persistence.Migrations
 
                     b.HasIndex("MenuItemsId");
 
-                    b.ToTable("IngredientMenuItem");
+                    b.ToTable("IngredientMenuItem", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

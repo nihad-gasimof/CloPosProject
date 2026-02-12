@@ -8,7 +8,9 @@ namespace CloPosProject.Application.DTOs.Authentication
 {
     public record AuthResponseDto
     {
-        public string AccessToken { get; init; }
-        public string RefreshToken { get; init; }
+        public string Token { get; set; } = string.Empty;
+        public DateTime ExpiredDate { get; set; }
+        public string RefreshToken { get; set; } = string.Empty;
+        public DateTime RefreshTokenExpiredAt { get; set; }
     }
 }
