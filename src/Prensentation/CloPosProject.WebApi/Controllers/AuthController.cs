@@ -26,7 +26,12 @@ namespace CloPosProject.WebApi.Controllers
         public async Task<IActionResult> Login([FromForm] LoginDto dto)
         {
             var result = await _mediator.Send(new LoginCommand(dto));
+            if (result.IsSuccess)
+            {
             return Ok(result);
+                
+            }
+            return StatusCode(result.StatusCode, result);
         }
         [ProducesResponseType(typeof(Response<string>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(Response<string>), StatusCodes.Status400BadRequest)]
@@ -34,7 +39,11 @@ namespace CloPosProject.WebApi.Controllers
         public async Task<IActionResult> Register([FromForm] RegisterDto dto)
         {
             var result = await _mediator.Send(new RegisterCommand(dto));
-            return Ok(result);
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            return StatusCode(result.StatusCode, result);
         }
         //[HttpPost("SeedRole")]
         //public async Task<SimpleResponse<string>> SeedRole()
@@ -46,14 +55,14 @@ namespace CloPosProject.WebApi.Controllers
         //    }
         //    return new SimpleResponse<string>("Ugurla rollar yaradildi",roles.First());
         //}
-        [ProducesResponseType(typeof(Response<AuthResponseDto>), StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(Response<AuthResponseDto>), StatusCodes.Status400BadRequest)]
-        [HttpPost("RefreshToken")]
-        public async Task<IActionResult> RefreshToken([FromForm] string token)
-        {
-            var result = await _mediator.Send(new RefreshTokenCommand(token));
-            return Ok(result);
+        //[ProducesResponseType(typeof(Response<AuthResponseDto>), StatusCodes.Status201Created)]
+        //[ProducesResponseType(typeof(Response<AuthResponseDto>), StatusCodes.Status400BadRequest)]
+        //[HttpPost("RefreshToken")]
+        //public async Task<IActionResult> RefreshToken([FromForm] string token)
+        //{
+        //    var result = await _mediator.Send(new RefreshTokenCommand(token));
+        //    return Ok(result);
 
-        }
+        //}
     }
 }

@@ -1,5 +1,6 @@
 ﻿using CloPosProject.Application.Abstract.Authentication;
 using CloPosProject.Application.Commands;
+using CloPosProject.Application.Validations.User;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -15,7 +16,8 @@ namespace CloPosProject.Application.ApplicationServiceRegistration
     {
         public static void AddApplicationServices(this IServiceCollection services)
         {
-            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            services.AddValidatorsFromAssembly(typeof(RegisterDtoValidator).Assembly);
+
             services.AddMediatR(x => x.RegisterServicesFromAssembly(typeof(RegisterCommand).Assembly));
         
         }

@@ -1,6 +1,8 @@
 ﻿using CloPosProject.Application.Abstract.Authentication;
+using CloPosProject.Application.DTOs.Authentication;
 using CloPosProject.Domain.Entities;
 using CloPosProject.Domain.Enums;
+using CloPosProject.Infrastructure.Concurate.Encrytping;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -17,47 +19,64 @@ namespace CloPosProject.Infrastructure.Concurate.Authentication
 {
     public class JwtGenerator : IJwtGenerator
     {
-        private readonly IConfiguration _config;
-        private readonly UserManager<User> _userManager;
-
-        public JwtGenerator(UserManager<User> userManager, IConfiguration config)
+        private readonly IConfiguration _configuration;
+        private readonly TokenOptionsDto _tokenOptions;
+        private readonly DateTime _expiresAt;
+        public JwtGenerator(IConfiguration configuration)
         {
-            _userManager = userManager;
-            _config = config;
+            _configuration = configuration;
+            _tokenOptions = _configuration.GetSection("TokenOptions").Get<TokenOptionsDto>() ?? new();
+            _expiresAt = DateTime.UtcNow.AddMinutes(_tokenOptions.TokenExpiration);
         }
 
-        public async Task<string> GenerateToken(User user)
+        public AuthResponseDto GenerateToken(List<Claim> claims)
         {
+            JwtHeader jwtHeader = CreateJwtHeader();
+            JwtPayload jwtPayload = CreateJwtPayload(claims);
+            JwtSecurityToken jwtToken = new(jwtHeader, jwtPayload);
 
-            var audience = _config["Jwt:Audience"];
-            var issuer = _config["Jwt:Issuer"];
-            var securitykey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:SecretKey"]));
-            var signincredential = new SigningCredentials(securitykey, SecurityAlgorithms.HmacSha256);
-            var claims = new List<Claim>
-            {
-               new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-               new Claim(ClaimTypes.Name, user.UserName),
-               new Claim(ClaimTypes.Email, user.Email),
-               new Claim(ClaimTypes.GivenName, user.Name),
-               new Claim(ClaimTypes.Surname, user.Surname),
+            return CreateAccessToken(jwtToken);
 
-            }
-            ;
-            var roles = await _userManager.GetRolesAsync(user);
-            foreach (var role in roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
-
-            var token = new JwtSecurityToken(
-              audience: audience,
-              issuer: issuer,
-              claims: claims,
-              expires: DateTime.Now.AddMinutes(Convert.ToDouble(_config["Jwt:ExpireMinutes"])),
-              signingCredentials: signincredential
-              );
-            JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
-            return tokenHandler.WriteToken(token);
         }
+
+        private AuthResponseDto CreateAccessToken(JwtSecurityToken jwtToken)
+        {
+            JwtSecurityTokenHandler jwtSecurityTokenHandler = new();
+
+            return new()
+            {
+                Token = jwtSecurityTokenHandler.WriteToken(jwtToken),
+                ExpiredDate = _expiresAt,
+                RefreshToken = GenerateRefreshToken(),
+                RefreshTokenExpiredAt = _expiresAt.AddMinutes(15)
+            };
+
+        }
+
+        private JwtPayload CreateJwtPayload(List<Claim> claims)
+        {
+            return new(
+                issuer: _tokenOptions.Issuer,
+                audience: _tokenOptions.Audience,
+                claims: claims,
+                notBefore: DateTime.UtcNow,
+                expires: _expiresAt
+                );
+        }
+
+        private JwtHeader CreateJwtHeader()
+        {
+            SecurityKey securityKey = SecurityKeyHelper.CreateSecurityKey(_tokenOptions.SecurityKey);
+            SigningCredentials signingCredentials = SigninCredentialHelper.CreateSigninCredentials(securityKey);
+            JwtHeader jwtHeader = new(signingCredentials);
+            return jwtHeader;
+        }
+
+        private string GenerateRefreshToken()
+        {
+            return Guid.NewGuid().ToString();
+        }
+
+      
     }
 }
