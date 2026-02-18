@@ -1,5 +1,5 @@
 ﻿using CloPosProject.Application.BaseResponseModel;
-using CloPosProject.Application.Commands;
+using CloPosProject.Application.Features.Commands.User;
 using CloPosProject.Application.DTOs.Authentication;
 using MediatR;
 using Microsoft.AspNetCore.Http;

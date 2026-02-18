@@ -2,6 +2,7 @@
 using CloPosProject.Application.BaseResponseModel;
 using CloPosProject.Application.DTOs.Authentication;
 using CloPosProject.Application.Exceptions.Common;
+using CloPosProject.Application.Features.Commands.User;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CloPosProject.Application.Commands.Handler
+namespace CloPosProject.Application.Features.Commands.Handler.User
 {
     public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Response<string>>
     {

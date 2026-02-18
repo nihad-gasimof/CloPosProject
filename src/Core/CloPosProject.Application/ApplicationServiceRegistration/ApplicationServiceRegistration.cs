@@ -1,5 +1,5 @@
 ﻿using CloPosProject.Application.Abstract.Authentication;
-using CloPosProject.Application.Commands;
+using CloPosProject.Application.Features.Commands.User;
 using CloPosProject.Application.Validations.User;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;

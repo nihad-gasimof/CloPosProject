@@ -4,6 +4,7 @@ using CloPosProject.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CloPosProject.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260216134055_FixedIngredientTable2")]
+    partial class FixedIngredientTable2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,12 +57,11 @@ namespace CloPosProject.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<decimal>("CurrentStock")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -67,8 +69,7 @@ namespace CloPosProject.Persistence.Migrations
                         .HasDefaultValue(true);
 
                     b.Property<decimal>("MinimumStock")
-                        .HasPrecision(18, 3)
-                        .HasColumnType("decimal(18,3)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -79,12 +80,10 @@ namespace CloPosProject.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("decimal(18,2)");
+
                     b.HasKey("Id");
-
-                    b.HasIndex("Category");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
 
                     b.ToTable("Ingredients", (string)null);
                 });
@@ -96,20 +95,17 @@ namespace CloPosProject.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("AverageUnitPrice")
-                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid>("IngredientId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Quantity")
-                        .HasPrecision(18, 3)
-                        .HasColumnType("decimal(18,3)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IngredientId")
-                        .IsUnique();
+                    b.HasIndex("IngredientId");
 
                     b.ToTable("Inventories", (string)null);
                 });
@@ -669,9 +665,9 @@ namespace CloPosProject.Persistence.Migrations
             modelBuilder.Entity("CloPosProject.Domain.Entities.Inventory", b =>
                 {
                     b.HasOne("CloPosProject.Domain.Entities.Ingredient", "Ingredient")
-                        .WithOne("Inventory")
-                        .HasForeignKey("CloPosProject.Domain.Entities.Inventory", "IngredientId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .WithMany()
+                        .HasForeignKey("IngredientId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Ingredient");
@@ -834,11 +830,6 @@ namespace CloPosProject.Persistence.Migrations
             modelBuilder.Entity("CloPosProject.Domain.Entities.Category", b =>
                 {
                     b.Navigation("MenuItems");
-                });
-
-            modelBuilder.Entity("CloPosProject.Domain.Entities.Ingredient", b =>
-                {
-                    b.Navigation("Inventory");
                 });
 
             modelBuilder.Entity("CloPosProject.Domain.Entities.Order", b =>
