@@ -6,7 +6,7 @@ using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CloPosProject.Application.Features.Commands.Handler.Ingredient
+namespace CloPosProject.Application.Features.Handler.Ingredient
 {
     public class GetByIdHandler : IRequestHandler<GetIngredientByIdQuery, SimpleResponse<IngredientResponseDto>>
     {

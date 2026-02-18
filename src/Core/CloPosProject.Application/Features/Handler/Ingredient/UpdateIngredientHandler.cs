@@ -6,7 +6,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CloPosProject.Application.Features.Commands.Handler.Ingredient
+namespace CloPosProject.Application.Features.Handler.Ingredient
 {
     public class UpdateIngredientHandler : IRequestHandler<UpdateIngredientCommand, SimpleResponse<string>>
     {
