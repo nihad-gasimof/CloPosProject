@@ -1,6 +1,5 @@
 ﻿using CloPosProject.Application.Abstract.Authentication;
 using CloPosProject.Application.ApplicationServiceRegistration;
-using CloPosProject.Application.Commands;
 using CloPosProject.Domain.Entities;
 using CloPosProject.Infrastructure.Concurate.Authentication;
 using CloPosProject.Infrastructure.InfrastructureServiceRegistration;
@@ -40,7 +39,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "CloPos Project", Version = "v1" });
 
     // Swagger üçün Authorize button
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme

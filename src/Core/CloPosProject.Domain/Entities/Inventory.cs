@@ -15,11 +15,25 @@ namespace CloPosProject.Domain.Entities
         public decimal Quantity { get; private set; }
         public decimal AverageUnitPrice { get; private set; }
 
-        public void AddStock(decimal quantity, decimal unitPrice)
+        private Inventory() { }
+        public Inventory(Guid ingredientId, decimal quantity, decimal unitPrice)
         {
-            AverageUnitPrice = (AverageUnitPrice * Quantity + unitPrice * quantity) / (Quantity + quantity);
-            Quantity += quantity;
+            Id = Guid.NewGuid();
+            IngredientId = ingredientId;
+            Quantity = quantity;
+            AverageUnitPrice = unitPrice;
         }
+    public void AddStock(decimal quantity, decimal unitPrice)
+{
+    if (quantity <= 0)
+        throw new ArgumentException("Quantity must be greater than 0");
+
+    var totalValue = AverageUnitPrice * Quantity;
+    var newValue = unitPrice * quantity;
+
+    Quantity += quantity;
+    AverageUnitPrice = Quantity == 0 ? 0 : (totalValue + newValue) / Quantity;
+}
 
         public void RemoveStock(decimal quantity)
         {

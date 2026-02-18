@@ -31,7 +31,13 @@ namespace CloPosProject.Application.BaseResponseModel
             Errors = new List<string>();
             StatusCode = 200;
         }
-
+        public SimpleResponse(string message)
+        {
+            Success = true;
+            Message = message;
+            Errors = new List<string>();
+            StatusCode = 200;
+        }
         public SimpleResponse(string message, T data)
         {
             Success = true;

@@ -1,6 +1,8 @@
 ﻿using CloPosProject.Application.Abstract.Authentication;
+using CloPosProject.Application.Abstract.Ingredient;
 using CloPosProject.Domain.Entities;
 using CloPosProject.Persistence.Concurate.Authentication;
+using CloPosProject.Persistence.Concurate.Ingredient;
 using CloPosProject.Persistence.Contexts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +34,7 @@ namespace CloPosProject.Persistence.PersistenceServiceRegistration
                 opt.User.RequireUniqueEmail = true;
 
             }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+            services.AddScoped<IIngredientService, IngredientService>();
         }
     }
 }

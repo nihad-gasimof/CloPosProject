@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CloPosProject.Application.Commands
+namespace CloPosProject.Application.Features.Commands.User
 {
     public record LoginCommand(LoginDto LoginDto) : IRequest<Response<AuthResponseDto>> { }
 }

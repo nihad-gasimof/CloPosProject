@@ -39,6 +39,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\CloPosProject.Application\CloPosProject.Application.csproj" />
+    <ProjectReference Include="..\..\Core\CloPosProject.Domain\CloPosProject.Domain.csproj" />
   </ItemGroup>
 
 </Project>

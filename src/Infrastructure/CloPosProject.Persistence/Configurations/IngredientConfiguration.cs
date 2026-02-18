@@ -9,33 +9,39 @@ namespace CloPosProject.Persistence.Configurations
         public void Configure(EntityTypeBuilder<Ingredient> builder)
         {
             builder.ToTable("Ingredients");
+
             builder.HasKey(i => i.Id);
 
             builder.Property(i => i.Name)
                 .IsRequired()
                 .HasMaxLength(200);
 
-            builder.Property(i => i.NameAz)
-                .HasMaxLength(200);
-
             builder.Property(i => i.Unit)
-                .IsRequired();
+                .IsRequired()
+                .HasConversion<string>();
 
-            builder.Property(i => i.CurrentStock)
-                .HasColumnType("decimal(18,2)");
+            builder.Property(i => i.Category)
+                .IsRequired()
+                .HasConversion<string>();
 
             builder.Property(i => i.MinimumStock)
-                .HasColumnType("decimal(18,2)");
-
-            builder.Property(i => i.UnitPrice)
-                .HasColumnType("decimal(18,2)");
+                .IsRequired()
+                .HasPrecision(18, 3);
 
             builder.Property(i => i.IsActive)
+                .IsRequired()
                 .HasDefaultValue(true);
 
-            builder.HasMany(i => i.MenuItems)
-                .WithMany(m => m.Ingredients);
-               
+            builder.Property(i => i.CreatedAt)
+                .IsRequired();
+
+            builder.HasIndex(i => i.Name).IsUnique();
+            builder.HasIndex(i => i.Category);
+
+            builder.HasOne(i => i.Inventory)
+                .WithOne(inv => inv.Ingredient)
+                .HasForeignKey<Inventory>(inv => inv.IngredientId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
