@@ -5,7 +5,7 @@ using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CloPosProject.Application.Features.Commands.Handler.Ingredient
+namespace CloPosProject.Application.Features.Handler.Ingredient
 {
     public class AddStockHandler : IRequestHandler<AddStockCommand, SimpleResponse<string>>
     {

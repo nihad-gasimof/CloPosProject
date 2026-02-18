@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CloPosProject.Application.Features.Commands.Handler.User
+namespace CloPosProject.Application.Features.Handler.User
 {
     public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Response<string>>
     {

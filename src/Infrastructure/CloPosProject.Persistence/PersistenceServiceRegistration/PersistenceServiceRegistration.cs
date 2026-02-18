@@ -1,8 +1,10 @@
 ﻿using CloPosProject.Application.Abstract.Authentication;
 using CloPosProject.Application.Abstract.Ingredient;
+using CloPosProject.Application.Abstract.MenuItem;
 using CloPosProject.Domain.Entities;
 using CloPosProject.Persistence.Concurate.Authentication;
 using CloPosProject.Persistence.Concurate.Ingredient;
+using CloPosProject.Persistence.Concurate.MenuItem;
 using CloPosProject.Persistence.Contexts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +37,7 @@ namespace CloPosProject.Persistence.PersistenceServiceRegistration
 
             }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
             services.AddScoped<IIngredientService, IngredientService>();
+            services.AddScoped<IMenuItemService, MenuItemService>();
         }
     }
 }
