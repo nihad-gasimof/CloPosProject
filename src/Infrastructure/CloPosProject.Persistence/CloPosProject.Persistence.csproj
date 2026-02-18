@@ -18,6 +18,7 @@
     <Compile Include="Configurations\InventoryConfiguration.cs" />
     <Compile Include="Configurations\InventoryTransactionConfiguration.cs" />
     <Compile Include="Configurations\MenuItemConfiguration.cs" />
+    <Compile Include="Configurations\MenuItemIngredientConfiguration.cs" />
     <Compile Include="Configurations\OrderConfiguration.cs" />
     <Compile Include="Configurations\OrderItemConfiguration.cs" />
     <Compile Include="Configurations\PaymentConfiguration.cs" />

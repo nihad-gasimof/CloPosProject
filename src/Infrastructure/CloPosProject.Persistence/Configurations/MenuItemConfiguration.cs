@@ -31,11 +31,12 @@ namespace CloPosProject.Persistence.Configurations
                 .WithMany(c => c.MenuItems)
                 .HasForeignKey(m => m.CategoryId)
                 .OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(m => m.MenuItemIngredients)
+           .WithOne(mi => mi.MenuItem)
+           .HasForeignKey(mi => mi.MenuItemId)
+           .OnDelete(DeleteBehavior.Cascade);
 
-            // Many-to-many between MenuItem and Ingredient (if intended as List<Ingredient>)
-            builder.HasMany(m => m.Ingredients)
-                .WithMany(i => i.MenuItems);
-               
+
         }
     }
 }

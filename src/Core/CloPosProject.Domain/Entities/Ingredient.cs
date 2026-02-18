@@ -19,7 +19,7 @@ namespace CloPosProject.Domain.Entities
         public DateTime CreatedAt { get; private set; }
 
         
-        public List<MenuItem> MenuItems { get; private set; } = new();
+        public List<MenuItemIngredient> MenuItemIngredients { get; private set; } = new();
         public Inventory? Inventory { get; private set; }
 
         private Ingredient() { }

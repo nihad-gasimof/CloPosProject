@@ -29,6 +29,15 @@ namespace CloPosProject.Infrastructure.Concurate.Cloudinary
         public async Task<string> FileCreateAsync(IFormFile file)
         {
             string filename = string.Concat(Guid.NewGuid(), file.FileName.Substring(file.FileName.LastIndexOf(".")));
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+            var extension = Path.GetExtension(file.FileName).ToLower();
+
+            if (!allowedExtensions.Contains(extension))
+                return ("Yalnız şəkil faylları yüklənə bilər (jpg, jpeg, png, gif, webp)");
+
+            if (file.Length > 5 * 1024 * 1024)
+                return ("Şəkil ölçüsü 5MB-dan çox ola bilməz");
+
             var uploadresult = new ImageUploadResult();
             using var stream=file.OpenReadStream();
             var uploadparams = new ImageUploadParams
