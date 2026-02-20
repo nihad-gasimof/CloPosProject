@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace CloPosProject.Domain.Enums
 {
-    public enum OrderItemStatus
+    public enum OrderType
     {
-        Pending,
-        Preparing,
-        Ready,
-        Served
+        DineIn,       // Restoranda (masa)
+        TakeAway,     // Götürüb aparma
+        Delivery      // Çatdırılma (Wolt, Bolt və s.)
     }
 }

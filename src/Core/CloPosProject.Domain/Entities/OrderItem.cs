@@ -20,7 +20,7 @@ namespace CloPosProject.Domain.Entities
         public decimal UnitPrice { get; private set; }
         public decimal Total => UnitPrice * Quantity;
 
-        public OrderItemStatus Status { get; private set; }
+        public OrderType Status { get; private set; }
         public string SpecialInstructions { get; private set; }
     }
 }
