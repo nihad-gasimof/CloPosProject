@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CloPosProject.Application.Features.Commands.Handler.Ingredient
+namespace CloPosProject.Application.Features.Handler.Ingredient
 {
     public class GetAllHandler : IRequestHandler<GetAllIngredientsQuery, SimpleResponse<List<IngredientResponseDto>>>
     {
