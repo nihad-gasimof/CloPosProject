@@ -28,7 +28,10 @@ namespace CloPosProject.Domain.Entities
         public string Notes { get; private set; }
 
         // Restoran məlumatları (DineIn)
+        public Guid WaiterId { get; private set; }
+        public User Waiter{ get; private set; }
         public Guid? TableId { get; private set; }
+        public Table? Table{ get; private set; }
         public string TableNumber { get; private set; }
 
         // Çatdırılma məlumatları (Delivery)
@@ -47,8 +50,7 @@ namespace CloPosProject.Domain.Entities
 
         // DineIn constructor
         public static Order CreateDineInOrder(
-            string customerName,
-            string customerPhone,
+            Guid WaiterId,
             Guid tableId,
             string tableNumber,
             string notes = null)
@@ -59,12 +61,12 @@ namespace CloPosProject.Domain.Entities
                 OrderDate = DateTime.UtcNow,
                 Status = OrderStatus.Pending,
                 OrderType = OrderType.DineIn,
-                CustomerName = customerName,
-                CustomerPhone = customerPhone,
                 TableId = tableId,
                 TableNumber = tableNumber,
                 Notes = notes,
-                DeliveryProvider = DeliveryProvider.None,
+                WaiterId=WaiterId
+                ,
+                DeliveryProvider = Enums.DeliveryProvider.None,
                 DeliveryFee = 0
             };
         }
@@ -86,7 +88,7 @@ namespace CloPosProject.Domain.Entities
                 CustomerPhone = customerPhone,
                 PickupTime = pickupTime ?? DateTime.UtcNow.AddMinutes(30), // Default 30 dəqiqə
                 Notes = notes,
-                DeliveryProvider = DeliveryProvider.None,
+                DeliveryProvider = Enums.DeliveryProvider.None,
                 DeliveryFee = 0,
                 IsPickedUp = false
             };
@@ -131,10 +133,10 @@ namespace CloPosProject.Domain.Entities
             // Provider-ə görə təxmini çatdırılma vaxtı
             var minutes = provider switch
             {
-                DeliveryProvider.Wolt => 45,
-                DeliveryProvider.Bolt => 40,
-                DeliveryProvider.Yemeksepeti => 50,
-                DeliveryProvider.OwnDelivery => 35,
+                Enums.DeliveryProvider.Wolt => 45,
+                Enums.DeliveryProvider.Bolt => 40,
+                Enums.DeliveryProvider.Yemeksepeti => 50,
+                Enums.DeliveryProvider.OwnDelivery => 35,
                 _ => 45
             };
 
@@ -231,4 +233,3 @@ namespace CloPosProject.Domain.Entities
     }
 }
 
-}

@@ -11,17 +11,30 @@ namespace CloPosProject.Persistence.Configurations
             builder.ToTable("OrderItems");
             builder.HasKey(oi => oi.Id);
 
+            builder.Property(oi => oi.MenuItemName)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            builder.Property(oi => oi.UnitPrice)
+                .IsRequired()
+                .HasPrecision(18, 2);
+
             builder.Property(oi => oi.Quantity)
                 .IsRequired();
 
-            builder.Property(oi => oi.UnitPrice)
-                .HasColumnType("decimal(18,2)");
+            builder.Property(oi => oi.Subtotal)
+                .IsRequired()
+                .HasPrecision(18, 2);
 
             builder.Property(oi => oi.SpecialInstructions)
-                .HasMaxLength(1000);
+                .HasMaxLength(500);
 
-            builder.Property(oi => oi.Status)
-                .IsRequired();
+            builder.HasIndex(oi => oi.OrderId);
+            builder.HasIndex(oi => oi.MenuItemId);
+
+            builder.HasOne(oi => oi.Order)
+                .WithMany(o => o.OrderItems)
+                .HasForeignKey(oi => oi.OrderId);
 
             builder.HasOne(oi => oi.MenuItem)
                 .WithMany()
