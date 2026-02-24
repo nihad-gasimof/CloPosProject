@@ -1,9 +1,11 @@
 ﻿using CloPosProject.Application.Abstract.Authentication;
+using CloPosProject.Application.Abstract.Payment;
 using CloPosProject.Application.ApplicationServiceRegistration;
 using CloPosProject.Domain.Entities;
 using CloPosProject.Infrastructure.Concurate.Authentication;
 using CloPosProject.Infrastructure.InfrastructureServiceRegistration;
 using CloPosProject.Persistence.Concurate.Authentication;
+using CloPosProject.Persistence.Concurate.Payment;
 using CloPosProject.Persistence.Contexts;
 using CloPosProject.Persistence.PersistenceServiceRegistration;
 using CloPosProject.WebApi.Middleware.GlobalExceptionHandling;

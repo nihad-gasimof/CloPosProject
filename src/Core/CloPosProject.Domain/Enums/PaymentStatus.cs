@@ -8,9 +8,17 @@ namespace CloPosProject.Domain.Enums
 {
     public enum PaymentStatus
     {
-        Pending,      // ödəniş gözləyir
-        Completed,    // ödəniş tamamlanıb
-        Failed,       // ödəniş uğursuz olub
-        Refunded      // ödəniş geri qaytarılıb
+       FullyPaid,
+       Cancelled,
+       Rejected,
+       Refused,
+       Expired,
+       Authorized,
+       PartiallyPaid,
+       Funded,
+       Declined,
+       Voided,
+       Refunded,
+       Closed
     }
 }

@@ -1,5 +1,6 @@
 ﻿using CloPosProject.Application.BaseResponseModel;
 using CloPosProject.Application.DTOs.Order;
+using CloPosProject.Application.DTOs.Payment;
 using CloPosProject.Domain.Enums;
 using System;
 using System.Collections.Generic;
@@ -56,5 +57,9 @@ namespace CloPosProject.Application.Abstract.Order
      int pageSize = 20);
         Task<SimpleResponse<List<OrderSummaryResponse>>> GetActiveDeliveryOrdersAsync(int pageNumber = 1,
      int pageSize = 20);
+
+        Task<SimpleResponse<PurchaseDto>> CreatePaymentForOrderAsync(Guid orderId, string redirectUrl);
+        Task<SimpleResponse<string>> VerifyAndCompletePaymentAsync(
+    int purchaseId);
     }
 }

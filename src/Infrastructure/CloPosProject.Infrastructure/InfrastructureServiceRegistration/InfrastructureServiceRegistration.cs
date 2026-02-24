@@ -1,8 +1,10 @@
 ﻿using CloPosProject.Application.Abstract.Authentication;
 using CloPosProject.Application.Abstract.ICloudinary;
+using CloPosProject.Application.Abstract.Payment;
 using CloPosProject.Application.DTOs.Authentication;
 using CloPosProject.Infrastructure.Concurate.Authentication;
 using CloPosProject.Infrastructure.Concurate.Cloudinary;
+using CloPosProject.Persistence.Concurate.Payment;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,9 +23,11 @@ namespace CloPosProject.Infrastructure.InfrastructureServiceRegistration
       
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddHttpClient();
+           services.AddScoped<IPaymentService, PaymentService>();
+
             services.AddScoped<IJwtGenerator, JwtGenerator>();
             services.AddScoped<ICloudinaryService, CloudinaryService>();
-
             _addJwtBearer(services, configuration);
 
             return services;
