@@ -6,6 +6,8 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
+using CloPosProject.Application.Abstract.Payment;
+using CloPosProject.Application.DTOs.Payment;
 
 namespace CloPosProject.WebApi.Controllers
 {
@@ -14,10 +16,11 @@ namespace CloPosProject.WebApi.Controllers
     public class IngredientController : ControllerBase
     {
         private readonly IMediator _mediator;
-
-        public IngredientController(IMediator mediator)
+        private readonly IPaymentService service;
+        public IngredientController(IMediator mediator, IPaymentService service)
         {
             _mediator = mediator;
+            this.service = service;
         }
 
         [HttpPost]
@@ -95,5 +98,18 @@ namespace CloPosProject.WebApi.Controllers
             var result = await _mediator.Send(new DeleteIngredientCommand(id));
             return Ok(result);
         }
+        //[HttpPost("payment")]
+        //public async Task<IActionResult> Test() {
+        //   var result= await service.CreatePaymentRequest(new Application.DTOs.Payment.OrderCreateDto()
+        //    {
+        //        Amount = 20,
+        //        Currency = "AZN",
+        //        Description = "Qardawlara salam",
+        //        RedirectUrl = "http://json2csharp.com/"
+        //   });
+        //    string url = $"{result.Order.HppUrl}?password={result.Order.Password}&id={result.Order.Id}";
+        //    return Ok(url);
+        //}
     }
+
 }

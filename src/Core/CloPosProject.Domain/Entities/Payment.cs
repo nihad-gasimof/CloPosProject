@@ -10,14 +10,22 @@ namespace CloPosProject.Domain.Entities
 {
     public class Payment : BaseEntity
     {
-        public Guid OrderId { get; private set; }
-        public Order Order { get; private set; }
+        public int PurchaseId { get; set; }
+        public string Password { get; set; } = string.Empty;
+        public string Secret { get; set; } = string.Empty;
+        public Order Order { get; set; } = null!;
+        public Guid OrderId { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public PaymentStatus PaymentStatus { get; set; }
+        public void MarkAsPaid(string transactionId)
+        {
+            PaymentStatus = PaymentStatus.FullyPaid;
+        }
 
-        public decimal Amount { get; private set; }
-        public PaymentMethod Method { get; private set; }
-        public PaymentStatus Status { get; private set; }
-        public string TransactionId { get; private set; }
-        public DateTime CreatedAt { get; private set; }
+        public void MarkAsFailed()
+        {
+            PaymentStatus = PaymentStatus.Rejected;
+        }
 
     }
 }

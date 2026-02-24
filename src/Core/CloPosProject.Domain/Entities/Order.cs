@@ -10,7 +10,7 @@ namespace CloPosProject.Domain.Entities
 {
     public class Order : BaseEntity
     {
-        public string OrderNumber { get; private set; }
+        public string OrderNumber { get; private set; } 
         public DateTime OrderDate { get; private set; }
         public OrderStatus Status { get; private set; }
         public OrderType OrderType { get; private set; }
@@ -43,11 +43,12 @@ namespace CloPosProject.Domain.Entities
         // TakeAway məlumatları
         public DateTime? PickupTime { get; private set; }
         public bool IsPickedUp { get; private set; }
+        public ICollection<Payment> Payments { get;  set; } = [];
 
         public List<OrderItem> OrderItems { get; private set; } = new();
 
         private Order() { }
-
+        public bool IsPaid => Payments.Any(p => p.PaymentStatus == PaymentStatus.FullyPaid);
         // DineIn constructor
         public static Order CreateDineInOrder(
             Guid WaiterId,

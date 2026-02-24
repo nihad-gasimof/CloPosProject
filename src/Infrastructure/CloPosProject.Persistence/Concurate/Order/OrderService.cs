@@ -2,6 +2,7 @@
 using CloPosProject.Application.Abstract.Order;
 using CloPosProject.Application.BaseResponseModel;
 using CloPosProject.Application.DTOs.Order;
+using CloPosProject.Application.DTOs.Payment;
 using CloPosProject.Domain.Entities;
 using CloPosProject.Domain.Enums;
 using CloPosProject.Persistence.Contexts;
@@ -17,14 +18,14 @@ namespace CloPosProject.Persistence.Concurate.Order
     public class OrderService : IOrderService
     {
         private readonly ApplicationDbContext _context;
-        private readonly IMenuItemService _menuItemService;
+        private readonly CloPosProject.Application.Abstract.Payment.IPaymentService _paymentService;
         private const decimal TAX_RATE = 0.18m;
 
 
-        public OrderService(IMenuItemService menuItemService, ApplicationDbContext context)
+        public OrderService(ApplicationDbContext context, CloPosProject.Application.Abstract.Payment.IPaymentService paymentService)
         {
-            _menuItemService = menuItemService;
             _context = context;
+            _paymentService = paymentService;
         }
 
         public async Task<SimpleResponse<string>> ApplyDiscountAsync(Guid orderId, decimal discount)
@@ -98,8 +99,10 @@ namespace CloPosProject.Persistence.Concurate.Order
         public async Task<SimpleResponse<Guid>> CreateDineInOrderAsync(Guid tableId, Guid waiterId, string tableNumber, string notes, List<OrderItemRequest> items)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
+
             if (items == null || !items.Any())
                 return new SimpleResponse<Guid>("Sifariş item-ları boş ola bilməz.");
+
             if (items.Any(i => i.Quantity <= 0))
                 return new SimpleResponse<Guid>("Məhsul miqdarı müsbət olmalıdır");
 
@@ -180,6 +183,28 @@ namespace CloPosProject.Persistence.Concurate.Order
               .FirstAsync(o => o.Id == order.Id);
             savedOrder.CalculateTotals(TAX_RATE);
             await _context.SaveChangesAsync();
+
+            // Create payment request and persist payment (do not mark order completed)
+            var purchaseDto = await _paymentService.CreatePaymentRequest(new CloPosProject.Application.DTOs.Payment.OrderCreateDto
+            {
+                Amount = savedOrder.FinalAmount,
+                Currency = "AZN",
+                Description = $"Order {savedOrder.OrderNumber}",
+                RedirectUrl = savedOrder.OrderType == OrderType.DineIn ? savedOrder.TableNumber ?? string.Empty : string.Empty
+            });
+
+            var payment = new CloPosProject.Domain.Entities.Payment
+            {
+                PurchaseId = int.TryParse(purchaseDto.Order.Id.ToString(), out var pid) ? pid : 0,
+                Password = purchaseDto.Order.Password,
+                Secret = purchaseDto.Order.Secret,
+                OrderId = savedOrder.Id,
+                CreatedDate = DateTime.UtcNow,
+                PaymentStatus = CloPosProject.Domain.Enums.PaymentStatus.Authorized
+            };
+            await _context.Set<CloPosProject.Domain.Entities.Payment>().AddAsync(payment);
+            await _context.SaveChangesAsync();
+
             await transaction.CommitAsync();
             return new SimpleResponse<Guid>("Sifariş uğurla  yaradıldı", order.Id);
         }
@@ -294,6 +319,29 @@ namespace CloPosProject.Persistence.Concurate.Order
               .FirstAsync(o => o.Id == order.Id);
             savedOrder.CalculateTotals(TAX_RATE);
             await _context.SaveChangesAsync();
+
+            // Create payment request and attach payment info (do not mark order completed yet)
+            var purchaseDto = await _paymentService.CreatePaymentRequest(new CloPosProject.Application.DTOs.Payment.OrderCreateDto
+            {
+                Amount = savedOrder.FinalAmount,
+                Currency = "AZN",
+                Description = $"Order {savedOrder.OrderNumber}",
+                RedirectUrl = savedOrder.OrderType == OrderType.Delivery ? savedOrder.EstimatedDeliveryTime?.ToString("o") ?? string.Empty : string.Empty
+            });
+
+            // Persist payment record
+            var payment = new CloPosProject.Domain.Entities.Payment
+            {
+                PurchaseId = int.TryParse(purchaseDto.Order.Id.ToString(), out var pid) ? pid : 0,
+                Password = purchaseDto.Order.Password,
+                Secret = purchaseDto.Order.Secret,
+                OrderId = savedOrder.Id,
+                CreatedDate = DateTime.UtcNow,
+                PaymentStatus = CloPosProject.Domain.Enums.PaymentStatus.Authorized
+            };
+            await _context.Set<CloPosProject.Domain.Entities.Payment>().AddAsync(payment);
+            await _context.SaveChangesAsync();
+
             await transaction.CommitAsync();
             return new SimpleResponse<Guid>("Çatdırılma sifarişi uğurla yaradıldı", order.Id);
         }
@@ -391,6 +439,28 @@ namespace CloPosProject.Persistence.Concurate.Order
               .FirstAsync(o => o.Id == order.Id);
             savedOrder.CalculateTotals(TAX_RATE);
             await _context.SaveChangesAsync();
+
+            // Create payment request and persist payment (do not mark order completed)
+            var purchaseDto = await _paymentService.CreatePaymentRequest(new CloPosProject.Application.DTOs.Payment.OrderCreateDto
+            {
+                Amount = savedOrder.FinalAmount,
+                Currency = "AZN",
+                Description = $"Order {savedOrder.OrderNumber}",
+                RedirectUrl = savedOrder.OrderType == OrderType.TakeAway ? savedOrder.PickupTime?.ToString("o") ?? string.Empty : string.Empty
+            });
+
+            var payment = new CloPosProject.Domain.Entities.Payment
+            {
+                PurchaseId = int.TryParse(purchaseDto.Order.Id.ToString(), out var pid) ? pid : 0,
+                Password = purchaseDto.Order.Password,
+                Secret = purchaseDto.Order.Secret,
+                OrderId = savedOrder.Id,
+                CreatedDate = DateTime.UtcNow,
+                PaymentStatus = CloPosProject.Domain.Enums.PaymentStatus.Authorized
+            };
+            await _context.Set<CloPosProject.Domain.Entities.Payment>().AddAsync(payment);
+            await _context.SaveChangesAsync();
+
             await transaction.CommitAsync();
             return new SimpleResponse<Guid>("Götürüb aparma sifarişi uğurla yaradıldı", order.Id);
         }
@@ -482,6 +552,78 @@ namespace CloPosProject.Persistence.Concurate.Order
             return new SimpleResponse<OrderResponse>(response);
         }
 
+        public async Task<SimpleResponse<PurchaseDto>> CreatePaymentForOrderAsync(
+            Guid orderId,
+            string redirectUrl)
+        {
+            var order = await _context.Orders
+                .Include(o => o.OrderItems)
+                .Include(o => o.Payments)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
+
+            if (order == null)
+                return new SimpleResponse<PurchaseDto>("Sifariş tapılmadı");
+
+          
+            if (order.IsPaid)
+                return new SimpleResponse<PurchaseDto>("Sifariş artıq ödənilib");
+
+            order.CalculateTotals(TAX_RATE);
+
+         
+            var purchaseDto = await _paymentService.CreatePaymentRequest(new OrderCreateDto
+            {
+                Amount = order.FinalAmount,
+                Currency = "AZN",
+                Description = $"Order {order.OrderNumber}",
+                RedirectUrl = redirectUrl
+            });
+
+            
+            var payment = new CloPosProject.Domain.Entities.Payment
+            {
+                PurchaseId = int.TryParse(purchaseDto.Order.Id.ToString(), out var pid) ? pid : 0,
+                Password = purchaseDto.Order.Password,
+                Secret = purchaseDto.Order.Secret,
+                OrderId = order.Id,
+                CreatedDate = DateTime.UtcNow,
+                PaymentStatus = CloPosProject.Domain.Enums.PaymentStatus.Authorized
+            };
+
+            await _context.Set<CloPosProject.Domain.Entities.Payment>().AddAsync(payment);
+            await _context.SaveChangesAsync();
+            return new SimpleResponse<PurchaseDto>(purchaseDto);
+        }
+        public async Task<SimpleResponse<string>> VerifyAndCompletePaymentAsync(
+    int purchaseId)
+        {
+            var payment = await _context.Set<CloPosProject.Domain.Entities.Payment>()
+                .Include(p => p.Order)
+                .FirstOrDefaultAsync(p => p.PurchaseId == purchaseId);
+
+            if (payment == null)
+                return new SimpleResponse<string>("Ödəniş tapılmadı");
+
+
+            var paymentStatus = await _paymentService.GetPaymentStatus(purchaseId);
+
+            if (paymentStatus.IsSuccess)
+            {
+                payment.MarkAsPaid(paymentStatus.TransactionId);
+                payment.Order.MarkAsCompleted();
+
+                await _context.SaveChangesAsync();
+
+                return new SimpleResponse<string>("Ödəniş uğurla tamamlandı");
+            }
+            else
+            {
+                payment.MarkAsFailed();
+                await _context.SaveChangesAsync();
+
+                return new SimpleResponse<string>("Ödəniş uğursuz oldu");
+            }
+        }
         public async Task<SimpleResponse<OrderResponse>> GetByOrderNumberAsync(string orderNumber)
         {
             var order = await _context.Orders
