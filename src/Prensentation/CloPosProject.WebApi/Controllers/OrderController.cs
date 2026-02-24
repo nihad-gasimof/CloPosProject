@@ -142,5 +142,25 @@ namespace CloPosProject.WebApi.Controllers
             var result = await _mediator.Send(new GetTableOrdersQuery(tableId, pageNumber, pageSize));
             return Ok(result);
         }
+
+        [HttpPost("{id:guid}/create-payment")]
+        [ProducesResponseType(typeof(SimpleResponse<CloPosProject.Application.DTOs.Payment.PurchaseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(SimpleResponse<string>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CreatePaymentForOrder([FromRoute] Guid id, [FromQuery] string redirectUrl)
+        {
+            var result = await _mediator.Send(new CreatePaymentForOrderCommand(id, redirectUrl));
+            string url = $"{result.Data.Order.HppUrl}?password={result.Data.Order.Password}&id={result.Data.Order.Id}";
+
+            return Ok(url);
+        }
+
+        [HttpPost("/verify-payment")]
+        [ProducesResponseType(typeof(SimpleResponse<string>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(SimpleResponse<string>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> VerifyAndCompletePayment( [FromQuery] int purchaseId)
+        {
+            var result = await _mediator.Send(new VerifyAndCompletePaymentCommand(purchaseId));
+            return Ok(result);
+        }
     }
 }

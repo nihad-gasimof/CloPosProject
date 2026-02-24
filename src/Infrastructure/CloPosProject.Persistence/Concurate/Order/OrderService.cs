@@ -609,7 +609,7 @@ namespace CloPosProject.Persistence.Concurate.Order
 
             if (paymentStatus.IsSuccess)
             {
-                payment.MarkAsPaid(paymentStatus.TransactionId);
+                payment.MarkAsPaid(paymentStatus.TransactionId);    
                 payment.Order.MarkAsCompleted();
 
                 await _context.SaveChangesAsync();

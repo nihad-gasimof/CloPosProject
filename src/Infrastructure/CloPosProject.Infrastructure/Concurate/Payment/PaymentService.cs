@@ -11,16 +11,20 @@ using System;
 using System.Globalization;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Microsoft.Extensions.Configuration;
 
 namespace CloPosProject.Persistence.Concurate.Payment
 {
     public class PaymentService : IPaymentService
     {
         private readonly HttpClient _httpClient;
-
-        public PaymentService(HttpClient httpClient)
+        private readonly string username;
+        private readonly string password;
+        public PaymentService(HttpClient httpClient,IConfiguration configuration)
         {
             _httpClient = httpClient;
+            var username = configuration.GetSection("KapitalBankSettings").GetValue<string>("Username");
+            var password = configuration.GetSection("KapitalBankSettings").GetValue<string>("Password");
         }
         
         // Interface method
@@ -61,7 +65,7 @@ namespace CloPosProject.Persistence.Concurate.Payment
             if (request.Headers.Authorization == null && _httpClient.DefaultRequestHeaders.Authorization == null)
             {
                 // Basic auth credentials (TerminalSys/kapital:kapital123)
-                var credentials = "TerminalSys/kapital:kapital123";
+                var credentials = $"{username}:{password}";
                 var base64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(credentials));
                 request.Headers.Authorization = new AuthenticationHeaderValue("Basic", base64);
             }
