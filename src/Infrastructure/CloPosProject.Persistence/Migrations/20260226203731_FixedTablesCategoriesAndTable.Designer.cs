@@ -4,6 +4,7 @@ using CloPosProject.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CloPosProject.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260226203731_FixedTablesCategoriesAndTable")]
+    partial class FixedTablesCategoriesAndTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -319,9 +322,6 @@ namespace CloPosProject.Persistence.Migrations
                     b.Property<Guid?>("TableId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("TableId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("TableNumber")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -355,8 +355,6 @@ namespace CloPosProject.Persistence.Migrations
                     b.HasIndex("Status");
 
                     b.HasIndex("TableId");
-
-                    b.HasIndex("TableId1");
 
                     b.HasIndex("WaiterId1");
 
@@ -555,27 +553,17 @@ namespace CloPosProject.Persistence.Migrations
 
                     b.Property<string>("Location")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Status")
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TableNumber")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("TableNumber")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("IsActive");
-
-                    b.HasIndex("Status");
-
-                    b.HasIndex("TableNumber")
-                        .IsUnique();
 
                     b.ToTable("Tables", (string)null);
                 });
@@ -851,14 +839,10 @@ namespace CloPosProject.Persistence.Migrations
 
             modelBuilder.Entity("CloPosProject.Domain.Entities.Order", b =>
                 {
-                    b.HasOne("CloPosProject.Domain.Entities.Table", null)
+                    b.HasOne("CloPosProject.Domain.Entities.Table", "Table")
                         .WithMany("Orders")
                         .HasForeignKey("TableId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("CloPosProject.Domain.Entities.Table", "Table")
-                        .WithMany()
-                        .HasForeignKey("TableId1");
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("CloPosProject.Domain.Entities.User", "Waiter")
                         .WithMany()
@@ -908,7 +892,7 @@ namespace CloPosProject.Persistence.Migrations
                     b.HasOne("CloPosProject.Domain.Entities.Table", "Table")
                         .WithMany("Reservations")
                         .HasForeignKey("TableId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Table");

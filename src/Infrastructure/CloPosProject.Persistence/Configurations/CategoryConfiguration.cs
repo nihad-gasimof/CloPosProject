@@ -13,13 +13,22 @@ namespace CloPosProject.Persistence.Configurations
 
             builder.Property(c => c.Name)
                 .IsRequired()
-                .HasMaxLength(200);
+                .HasMaxLength(100);
 
             builder.Property(c => c.Description)
-                .HasMaxLength(1000);
+                .HasMaxLength(500);
+
+            builder.Property(c => c.DisplayOrder)
+                .IsRequired()
+                .HasDefaultValue(0);
 
             builder.Property(c => c.IsActive)
+                .IsRequired()
                 .HasDefaultValue(true);
+
+            builder.HasIndex(c => c.Name).IsUnique();
+            builder.HasIndex(c => c.DisplayOrder);
+            builder.HasIndex(c => c.IsActive);
 
             builder.HasMany(c => c.MenuItems)
                 .WithOne(m => m.Category)
