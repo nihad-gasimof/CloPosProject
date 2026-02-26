@@ -1,9 +1,9 @@
 using CloPosProject.Application.BaseResponseModel;
-using CloPosProject.Application.Features.Commands.Order;
 using CloPosProject.Application.Abstract.Order;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
+using CloPosProject.Application.Features.Commands.Order;
 
 namespace CloPosProject.Application.Features.Handler.Order
 {

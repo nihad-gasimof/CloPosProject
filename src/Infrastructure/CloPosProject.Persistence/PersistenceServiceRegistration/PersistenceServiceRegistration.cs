@@ -1,12 +1,16 @@
 ﻿using CloPosProject.Application.Abstract.Authentication;
+using CloPosProject.Application.Abstract.Category;
 using CloPosProject.Application.Abstract.Ingredient;
 using CloPosProject.Application.Abstract.MenuItem;
 using CloPosProject.Application.Abstract.Order;
+using CloPosProject.Application.Abstract.Table;
 using CloPosProject.Domain.Entities;
 using CloPosProject.Persistence.Concurate.Authentication;
+using CloPosProject.Persistence.Concurate.Category;
 using CloPosProject.Persistence.Concurate.Ingredient;
 using CloPosProject.Persistence.Concurate.MenuItem;
 using CloPosProject.Persistence.Concurate.Order;
+using CloPosProject.Persistence.Concurate.Table;
 using CloPosProject.Persistence.Contexts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -41,6 +45,8 @@ namespace CloPosProject.Persistence.PersistenceServiceRegistration
             services.AddScoped<IIngredientService, IngredientService>();
             services.AddScoped<IMenuItemService, MenuItemService>();
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<ITableService, TableService>();
+            services.AddScoped<ICategoryService, CategoryService>();
         }
     }
 }

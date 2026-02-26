@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Features\Handlers\**" />
+    <EmbeddedResource Remove="Features\Handlers\**" />
+    <None Remove="Features\Handlers\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="16.0.0" />
     <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.1" />
@@ -18,10 +24,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CloPosProject.Domain\CloPosProject.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Features\Handlers\" />
   </ItemGroup>
 
 </Project>
