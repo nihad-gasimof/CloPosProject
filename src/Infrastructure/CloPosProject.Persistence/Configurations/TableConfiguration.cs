@@ -35,7 +35,7 @@ namespace CloPosProject.Persistence.Configurations
                 builder.HasIndex(t => t.IsActive);
 
                 builder.HasMany(t => t.Orders)
-                    .WithOne()
+                    .WithOne(o => o.Table)
                     .HasForeignKey(o => o.TableId)
                     .OnDelete(DeleteBehavior.Restrict);
 

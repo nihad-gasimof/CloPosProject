@@ -25,7 +25,7 @@ namespace CloPosProject.WebApi.Controllers
         [HttpPost("dine-in")]
         [ProducesResponseType(typeof(SimpleResponse<Guid>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(SimpleResponse<string>), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<SimpleResponse<Guid>>> CreateDineIn([FromForm] CreateDineInOrderRequest request)
+        public async Task<ActionResult<SimpleResponse<Guid>>> CreateDineIn([FromBody] CreateDineInOrderRequest request)
         {
             var result = await _mediator.Send(new CreateDineInOrderCommand(request));
             return Ok(result);

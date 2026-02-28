@@ -2,6 +2,7 @@
 using CloPosProject.Domain.Enums;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,27 +24,31 @@ namespace CloPosProject.Domain.Entities
         public decimal FinalAmount { get; private set; }
 
         // Müştəri məlumatları
-        public string CustomerName { get; private set; }
-        public string CustomerPhone { get; private set; }
-        public string Notes { get; private set; }
+        public string? CustomerName { get; private set; }
+        public string? CustomerPhone { get; private set; }
+        public string? Notes { get; private set; }
 
         // Restoran məlumatları (DineIn)
-        public Guid WaiterId { get; private set; }
+        public string? WaiterId { get; private set; }
+        [ForeignKey("WaiterId")]
+
         public User Waiter{ get; private set; }
         public Guid? TableId { get; private set; }
+        [ForeignKey("TableId")]
+
         public Table? Table{ get; private set; }
-        public string TableNumber { get; private set; }
+        public string? TableNumber { get; private set; }
 
         // Çatdırılma məlumatları (Delivery)
         public DeliveryProvider? DeliveryProvider { get; private set; }
-        public string DeliveryAddress { get; private set; }
-        public string DeliveryInstructions { get; private set; }
+        public string? DeliveryAddress { get; private set; }
+        public string? DeliveryInstructions { get; private set; }
         public DateTime? EstimatedDeliveryTime { get; private set; }
 
         // TakeAway məlumatları
         public DateTime? PickupTime { get; private set; }
         public bool IsPickedUp { get; private set; }
-        public ICollection<Payment> Payments { get;  set; } = [];
+        public ICollection<Payment> Payments { get;  set; } = new List<Payment>();
 
         public List<OrderItem> OrderItems { get; private set; } = new();
 
@@ -51,7 +56,7 @@ namespace CloPosProject.Domain.Entities
         public bool IsPaid => Payments.Any(p => p.PaymentStatus == PaymentStatus.FullyPaid);
         // DineIn constructor
         public static Order CreateDineInOrder(
-            Guid WaiterId,
+            string WaiterId,
             Guid tableId,
             string tableNumber,
             string notes = null)
@@ -65,7 +70,7 @@ namespace CloPosProject.Domain.Entities
                 TableId = tableId,
                 TableNumber = tableNumber,
                 Notes = notes,
-                WaiterId=WaiterId
+                WaiterId = WaiterId
                 ,
                 DeliveryProvider = Enums.DeliveryProvider.None,
                 DeliveryFee = 0
