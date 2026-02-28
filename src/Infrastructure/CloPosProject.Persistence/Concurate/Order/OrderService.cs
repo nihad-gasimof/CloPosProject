@@ -99,6 +99,8 @@ namespace CloPosProject.Persistence.Concurate.Order
         public async Task<SimpleResponse<Guid>> CreateDineInOrderAsync(Guid tableId, Guid waiterId, string tableNumber, string notes, List<OrderItemRequest> items)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
 
             if (items == null || !items.Any())
                 return new SimpleResponse<Guid>("Sifariş item-ları boş ola bilməz.");
@@ -144,7 +146,7 @@ namespace CloPosProject.Persistence.Concurate.Order
             }
             if (insufficientStockItems.Any())
                 return new SimpleResponse<Guid>("Kifayət qədər ingredient yoxdur:\n" + string.Join("\n", insufficientStockItems));
-            var order = CloPosProject.Domain.Entities.Order.CreateDineInOrder(waiterId, tableId, tableNumber, notes);
+            var order = CloPosProject.Domain.Entities.Order.CreateDineInOrder(waiterId.ToString(), tableId, tableNumber, notes);
             await _context.Orders.AddAsync(order);
             foreach (var item in items)
             {
@@ -205,13 +207,21 @@ namespace CloPosProject.Persistence.Concurate.Order
             await _context.Set<CloPosProject.Domain.Entities.Payment>().AddAsync(payment);
             await _context.SaveChangesAsync();
 
-            await transaction.CommitAsync();
-            return new SimpleResponse<Guid>("Sifariş uğurla  yaradıldı", order.Id);
+                await transaction.CommitAsync();
+                return new SimpleResponse<Guid>("Sifariş uğurla  yaradıldı", order.Id);
+            }
+            catch (Exception ex)
+            {
+                try { await transaction.RollbackAsync(); } catch { }
+                return new SimpleResponse<Guid>(ex.InnerException?.Message ?? ex.Message);
+            }
         }
 
         public async Task<SimpleResponse<Guid>> CreateDeliveryOrderAsync(string customerName, string customerPhone, string deliveryAddress, DeliveryProvider deliveryProvider, decimal deliveryFee, string deliveryInstructions, string notes, List<OrderItemRequest> items)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
 
             if (string.IsNullOrWhiteSpace(customerName))
                 return new SimpleResponse<Guid>("Müştəri adı boş ola bilməz");
@@ -342,13 +352,21 @@ namespace CloPosProject.Persistence.Concurate.Order
             await _context.Set<CloPosProject.Domain.Entities.Payment>().AddAsync(payment);
             await _context.SaveChangesAsync();
 
-            await transaction.CommitAsync();
-            return new SimpleResponse<Guid>("Çatdırılma sifarişi uğurla yaradıldı", order.Id);
+                await transaction.CommitAsync();
+                return new SimpleResponse<Guid>("Çatdırılma sifarişi uğurla yaradıldı", order.Id);
+            }
+            catch (Exception ex)
+            {
+                try { await transaction.RollbackAsync(); } catch { }
+                return new SimpleResponse<Guid>(ex.InnerException?.Message ?? ex.Message);
+            }
         }
 
         public async Task<SimpleResponse<Guid>> CreateTakeAwayOrderAsync(string customerName, string customerPhone, DateTime? pickupTime, string notes, List<OrderItemRequest> items)
         {
             var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
             if (items == null || !items.Any())
                 return new SimpleResponse<Guid>("Sifariş item-ları boş ola bilməz.");
             if (items.Any(i => i.Quantity <= 0))
@@ -461,8 +479,14 @@ namespace CloPosProject.Persistence.Concurate.Order
             await _context.Set<CloPosProject.Domain.Entities.Payment>().AddAsync(payment);
             await _context.SaveChangesAsync();
 
-            await transaction.CommitAsync();
-            return new SimpleResponse<Guid>("Götürüb aparma sifarişi uğurla yaradıldı", order.Id);
+                await transaction.CommitAsync();
+                return new SimpleResponse<Guid>("Götürüb aparma sifarişi uğurla yaradıldı", order.Id);
+            }
+            catch (Exception ex)
+            {
+                try { await transaction.RollbackAsync(); } catch { }
+                return new SimpleResponse<Guid>(ex.InnerException?.Message ?? ex.Message);
+            }
         }
 
         public async Task<SimpleResponse<List<OrderSummaryResponse>>> GetActiveDeliveryOrdersAsync(int pageNumber = 1,
@@ -744,7 +768,7 @@ namespace CloPosProject.Persistence.Concurate.Order
                 OrderType = order.OrderType,
 
                 TableId = order.TableId,
-                WaiterId = order.WaiterId,
+                WaiterId = Guid.TryParse(order.WaiterId, out var wid) ? wid : (Guid?)null,
                 TableName = order.TableNumber?.ToString(),
 
                 CustomerName = order.CustomerName,

@@ -4,6 +4,7 @@ using CloPosProject.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CloPosProject.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260228214511_fixedtables")]
+    partial class fixedtables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -314,6 +317,9 @@ namespace CloPosProject.Persistence.Migrations
                     b.Property<Guid?>("TableId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("TableId1")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("TableNumber")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
@@ -343,6 +349,8 @@ namespace CloPosProject.Persistence.Migrations
                     b.HasIndex("Status");
 
                     b.HasIndex("TableId");
+
+                    b.HasIndex("TableId1");
 
                     b.HasIndex("WaiterId");
 
@@ -837,10 +845,14 @@ namespace CloPosProject.Persistence.Migrations
 
             modelBuilder.Entity("CloPosProject.Domain.Entities.Order", b =>
                 {
-                    b.HasOne("CloPosProject.Domain.Entities.Table", "Table")
+                    b.HasOne("CloPosProject.Domain.Entities.Table", null)
                         .WithMany("Orders")
                         .HasForeignKey("TableId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("CloPosProject.Domain.Entities.Table", "Table")
+                        .WithMany()
+                        .HasForeignKey("TableId1");
 
                     b.HasOne("CloPosProject.Domain.Entities.User", "Waiter")
                         .WithMany()

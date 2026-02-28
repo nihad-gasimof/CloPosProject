@@ -1,6 +1,7 @@
 ﻿using CloPosProject.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Reflection.Emit;
 
 namespace CloPosProject.Persistence.Configurations
 {
@@ -86,6 +87,10 @@ namespace CloPosProject.Persistence.Configurations
                 .WithOne(oi => oi.Order)
                 .HasForeignKey(oi => oi.OrderId)
                 .OnDelete(DeleteBehavior.Cascade);
+            builder
+    .HasOne(o => o.Table)
+    .WithMany(t => t.Orders)
+    .HasForeignKey(o => o.TableId);
         }
     }
 }
