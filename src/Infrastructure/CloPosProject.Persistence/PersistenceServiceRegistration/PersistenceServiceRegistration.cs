@@ -1,4 +1,5 @@
-﻿using CloPosProject.Application.Abstract.Authentication;
+﻿using CloPosProject.Application.Abstract.Ai;
+using CloPosProject.Application.Abstract.Authentication;
 using CloPosProject.Application.Abstract.Category;
 using CloPosProject.Application.Abstract.Ingredient;
 using CloPosProject.Application.Abstract.MenuItem;
@@ -7,6 +8,7 @@ using CloPosProject.Application.Abstract.Report;
 using CloPosProject.Application.Abstract.Reservation;
 using CloPosProject.Application.Abstract.Table;
 using CloPosProject.Domain.Entities;
+using CloPosProject.Infrastructure.Concurate.Ai;
 using CloPosProject.Persistence.Concurate.Authentication;
 using CloPosProject.Persistence.Concurate.Category;
 using CloPosProject.Persistence.Concurate.Ingredient;
@@ -34,7 +36,7 @@ namespace CloPosProject.Persistence.PersistenceServiceRegistration
         {
            services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-
+            services.AddScoped<IAdminAIService, AdminAiService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddIdentity<User, IdentityRole>(opt =>
             {
