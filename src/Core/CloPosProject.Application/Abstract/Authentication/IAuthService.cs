@@ -15,5 +15,6 @@ namespace CloPosProject.Application.Abstract.Authentication
         Task<Response<string>> RegisterAsync(RegisterDto registerDto);
         Task<SimpleResponse<string>> AssignRoleAsync(Guid Id,Roles role);
         Task<SimpleResponse<List<GetUserDto>>> GetAllUser();
+        Task<Response<string>> ConfirmEmailAsync(string userId, string token);
     }
 }
