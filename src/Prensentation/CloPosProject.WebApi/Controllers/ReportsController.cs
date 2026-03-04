@@ -71,7 +71,7 @@ namespace CloPosProject.WebApi.Controllers
         public IActionResult TriggerReportNow()
         {
             BackgroundJob.Enqueue<DailyReportJob>(job =>
-                job.GenerateYesterdayReport(HttpContext.RequestServices));
+                job.GenerateYesterdayReport());
 
             return Ok(new { message = "Hesabat prosesi işə salındı" });
         }

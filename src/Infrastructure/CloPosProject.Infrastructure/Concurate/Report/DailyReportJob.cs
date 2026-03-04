@@ -12,18 +12,21 @@ namespace CloPosProject.Infrastructure.Concurate.Report
 {
     public class DailyReportJob
     {
-
+        private readonly  IReportService _reportService;
+        public DailyReportJob(IReportService reportService)
+        {
+            _reportService = reportService;
+        }
 
         [AutomaticRetry(Attempts = 3)]
-        public async Task GenerateYesterdayReport(IServiceProvider serviceProvider)
+        public async Task GenerateYesterdayReport()
         {
-            using var scope = serviceProvider.CreateScope();
-            var reportService = scope.ServiceProvider.GetRequiredService<IReportService>();
+            
 
             var yesterday = DateTime.Today.AddDays(-1);
 
 
-            var result = await reportService.GenerateDailyReportAsync(yesterday);
+            var result = await _reportService.GenerateDailyReportAsync(yesterday);
 
             if (result.Success)
             {

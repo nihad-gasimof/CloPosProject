@@ -124,10 +124,10 @@ namespace CloPosProject.Persistence.Concurate.Report
                                 o.OrderDate < nextDay &&
                                 o.WaiterId != null &&
                                 o.Status == OrderStatus.Completed)
-                    .GroupBy(o => new { o.WaiterId, o.Waiter.Name, o.Waiter.Surname})
+                    .GroupBy(o => new { o.WaiterId, o.Waiter.Name, o.Waiter.Surname })
                     .Select(g => new WaiterPerformance
                     {
-                        WaiterId = g.Key.WaiterId??"",
+                        WaiterId = g.Key.WaiterId ?? "",
                         WaiterName = $"{g.Key.Name} {g.Key.Surname}",
                         OrdersServed = g.Count(),
                         TotalRevenue = g.Sum(o => o.FinalAmount),
@@ -140,18 +140,19 @@ namespace CloPosProject.Persistence.Concurate.Report
 
                 // 8. STOK ANALİZİ
                 var lowStockItems = await _context.Ingredients
-                    .Include(i => i.Inventory)
-                    .Where(i => i.IsActive && i.CurrentStock < i.MinimumStock)
-                    .Select(i => new LowStockItem
-                    {
-                        IngredientId = i.Id,
-                        IngredientName = i.Name,
-                        CurrentStock = i.CurrentStock,
-                        MinimumStock = i.MinimumStock,
-                        Unit = i.Unit.ToString(),
-                        Deficit = i.MinimumStock - i.CurrentStock
-                    })
-                    .ToListAsync();
+    .Where(i => i.IsActive &&
+                ((decimal?)i.Inventory.Quantity ?? 0m) < i.MinimumStock)
+    .Select(i => new LowStockItem
+    {
+        IngredientId = i.Id,
+        IngredientName = i.Name,
+        CurrentStock = (decimal?)i.Inventory.Quantity ?? 0m,
+        MinimumStock = i.MinimumStock,
+        Unit = i.Unit.ToString(),
+        Deficit = i.MinimumStock -
+                  ((decimal?)i.Inventory.Quantity ?? 0m)
+    })
+    .ToListAsync();
 
                 var lowStockItemsJson = JsonSerializer.Serialize(lowStockItems);
 
