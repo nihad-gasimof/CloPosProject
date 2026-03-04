@@ -13,6 +13,7 @@ namespace CloPosProject.Domain.Enums
         Arrived,
         Completed,
         Cancelled,
+        Seated,
         NoShow
     }
 }

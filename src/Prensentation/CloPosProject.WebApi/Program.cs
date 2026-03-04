@@ -3,12 +3,16 @@ using CloPosProject.Application.Abstract.Payment;
 using CloPosProject.Application.ApplicationServiceRegistration;
 using CloPosProject.Domain.Entities;
 using CloPosProject.Infrastructure.Concurate.Authentication;
+using CloPosProject.Infrastructure.Concurate.Report;
 using CloPosProject.Infrastructure.InfrastructureServiceRegistration;
 using CloPosProject.Persistence.Concurate.Authentication;
 using CloPosProject.Persistence.Concurate.Payment;
 using CloPosProject.Persistence.Contexts;
 using CloPosProject.Persistence.PersistenceServiceRegistration;
 using CloPosProject.WebApi.Middleware.GlobalExceptionHandling;
+using Hangfire;
+using Hangfire.Dashboard;
+using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -21,12 +25,29 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+}); ;
 
 builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices(configuration);
 builder.Services.AddInfrastructureServices(configuration);
-
+builder.Services.AddHangfire(configuration => configuration
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseSqlServerStorage(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        new SqlServerStorageOptions
+        {
+            CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+            SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+            QueuePollInterval = TimeSpan.Zero,
+            UseRecommendedIsolationLevel = true,
+            DisableGlobalLocks = true
+        }));
+builder.Services.AddHangfireServer();
 
 builder.Services.AddAuthorization();
 builder.Services.AddCors(options =>
@@ -74,6 +95,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    Authorization = new[] { new HangfireAuthorizationFilter() }
+});
+// Recurring Jobs
+RecurringJob.AddOrUpdate<DailyReportJob>(
+    "daily-report",
+    job => job.GenerateYesterdayReport(app.Services),
+    "0 0 * * *" // Hər gün saat 00:00-da
+);
 app.UseMiddleware<GlobalExceptionHandling>();
 app.UseHttpsRedirection();
 
@@ -84,3 +115,11 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+public class HangfireAuthorizationFilter : IDashboardAuthorizationFilter
+{
+    public bool Authorize(DashboardContext context)
+    {
+        // Production-da düzgün authentication yoxlaması olmalıdır
+        return true; // Development üçün
+    }
+}

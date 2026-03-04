@@ -5,6 +5,8 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using CloPosProject.Domain.Enums;
+using CloPosProject.Application.Features.Queries.User;
 
 namespace CloPosProject.WebApi.Controllers
 {
@@ -40,6 +42,30 @@ namespace CloPosProject.WebApi.Controllers
         {
             var result = await _mediator.Send(new RegisterCommand(dto));
             if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            return StatusCode(result.StatusCode, result);
+        }
+        [ProducesResponseType(typeof(Response<string>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(Response<string>), StatusCodes.Status400BadRequest)]
+        [HttpPost("AssignRole/{Id}")]
+        public async Task<IActionResult> AssignRole([FromRoute] Guid Id ,[FromQuery]Roles role)
+        {
+            var result = await _mediator.Send(new AssignedRoleCommand(Id,role));
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return StatusCode(result.StatusCode, result);
+        }
+        [ProducesResponseType(typeof(Response<string>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(Response<string>), StatusCodes.Status400BadRequest)]
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetAllUser()
+        {
+            var result = await _mediator.Send(new GetAllUserQuery());
+            if (result.Success)
             {
                 return Ok(result);
             }

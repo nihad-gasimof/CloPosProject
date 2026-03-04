@@ -4,6 +4,8 @@ using CloPosProject.Application.Abstract.Payment;
 using CloPosProject.Application.DTOs.Authentication;
 using CloPosProject.Infrastructure.Concurate.Authentication;
 using CloPosProject.Infrastructure.Concurate.Cloudinary;
+using CloPosProject.Infrastructure.Concurate.Report;
+using CloPosProject.Infrastructure.Concurate.Reservation;
 using CloPosProject.Persistence.Concurate.Payment;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
@@ -24,8 +26,9 @@ namespace CloPosProject.Infrastructure.InfrastructureServiceRegistration
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddHttpClient();
-           services.AddScoped<IPaymentService, PaymentService>();
-
+            services.AddScoped<DailyReportJob>();
+            services.AddScoped<IPaymentService, PaymentService>();
+            services.AddHostedService<ReservationBackgroundJob>();
             services.AddScoped<IJwtGenerator, JwtGenerator>();
             services.AddScoped<ICloudinaryService, CloudinaryService>();
             _addJwtBearer(services, configuration);

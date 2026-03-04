@@ -15,6 +15,7 @@ namespace CloPosProject.Persistence.Contexts
         public DbSet<OrderItem>? OrderItems { get; set; }
         public DbSet<MenuItem>? MenuItems { get; set; }
         public DbSet<Category>? Categories { get; set; }
+        public DbSet<DailyReport>? DailyReports { get; set; }
         public DbSet<Table>? Tables { get; set; }
         public DbSet<Reservation>? Reservations { get; set; }
         public DbSet<Inventory>? Inventories { get; set; }
