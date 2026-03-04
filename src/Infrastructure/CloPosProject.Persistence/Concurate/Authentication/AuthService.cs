@@ -3,7 +3,9 @@ using CloPosProject.Application.BaseResponseModel;
 using CloPosProject.Application.DTOs.Authentication;
 using CloPosProject.Domain.Entities;
 using CloPosProject.Domain.Enums;
+using CloPosProject.Persistence.Contexts;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,12 +20,54 @@ namespace CloPosProject.Persistence.Concurate.Authentication
     {
         private readonly IJwtGenerator _jwtGenerator;
         private readonly UserManager<User> _userManager;
+        private readonly ApplicationDbContext _context;
         private readonly SignInManager<User>     _signinmanager;
-        public AuthService(IJwtGenerator jwtGenerator, UserManager<User> userManager, SignInManager<User> signinmanager)
+        public AuthService(IJwtGenerator jwtGenerator, UserManager<User> userManager, SignInManager<User> signinmanager, ApplicationDbContext context)
         {
             _jwtGenerator = jwtGenerator;
             _userManager = userManager;
             _signinmanager = signinmanager;
+            _context = context;
+        }
+
+        public async Task<SimpleResponse<string>> AssignRoleAsync(Guid Id,Roles role)
+        {
+           var user= await _userManager.FindByIdAsync(Id.ToString());
+            if (user == null)
+            {
+                return new SimpleResponse<string>("İstifadəçi tapılmadı.");
+            }
+            var currentRoles = await _userManager.GetRolesAsync(user);
+            await _userManager.RemoveFromRolesAsync(user, currentRoles);
+          await   _userManager.AddToRoleAsync(user,role.ToString() );
+            return new SimpleResponse<string>("Userin Rolu Ugurla deyisdirildi",$"Role:{role},Id:{Id}");
+        }
+
+        public async  Task<SimpleResponse<List<GetUserDto>>> GetAllUser()
+        {
+            var users = _userManager.Users.ToList();
+            if (!users.Any())
+            {
+                return new SimpleResponse<List<GetUserDto>>( "No users found.", new List<GetUserDto>());
+            }
+            var userDtos = new List<GetUserDto>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user) ?? new List<string>();
+
+                var dto = new GetUserDto
+                {
+                    Id = user.Id.ToString(),
+                    Name = user.UserName??"Yoxdur",
+                    Surname=user.Surname,
+                    Mail = user.Email??"Yoxdur",
+                    Role = roles.FirstOrDefault()??"Rol teyin olunmayib"
+                };
+
+                userDtos.Add(dto);
+            }
+            return new SimpleResponse<List<GetUserDto>>(userDtos);
         }
 
         public async Task<Response<AuthResponseDto>> LoginAsync(LoginDto loginDto)

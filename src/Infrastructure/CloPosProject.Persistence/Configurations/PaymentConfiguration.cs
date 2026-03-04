@@ -13,8 +13,9 @@ namespace CloPosProject.Persistence.Configurations
 
 
             builder.HasOne(p => p.Order)
-                .WithMany()
+                .WithMany(o => o.Payments)
                 .HasForeignKey(p => p.OrderId)
+                .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

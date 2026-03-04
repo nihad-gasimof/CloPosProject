@@ -1,5 +1,6 @@
 ﻿using CloPosProject.Application.BaseResponseModel;
 using CloPosProject.Application.DTOs.Authentication;
+using CloPosProject.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,7 @@ namespace CloPosProject.Application.Abstract.Authentication
     {
         Task<Response<AuthResponseDto>> LoginAsync(LoginDto loginDto);
         Task<Response<string>> RegisterAsync(RegisterDto registerDto);
+        Task<SimpleResponse<string>> AssignRoleAsync(Guid Id,Roles role);
+        Task<SimpleResponse<List<GetUserDto>>> GetAllUser();
     }
 }

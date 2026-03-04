@@ -14,8 +14,10 @@
 
   <ItemGroup>
     <Compile Include="Configurations\CategoryConfiguration.cs" />
+    <Compile Include="Configurations\DailyReportConfiguration .cs" />
     <Compile Include="Configurations\IngredientConfiguration.cs" />
     <Compile Include="Configurations\InventoryConfiguration.cs" />
+    <Compile Include="Configurations\InventoryLogConfiguration .cs" />
     <Compile Include="Configurations\InventoryTransactionConfiguration.cs" />
     <Compile Include="Configurations\MenuItemConfiguration.cs" />
     <Compile Include="Configurations\MenuItemIngredientConfiguration.cs" />
