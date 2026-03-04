@@ -102,7 +102,7 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions
 // Recurring Jobs
 RecurringJob.AddOrUpdate<DailyReportJob>(
     "daily-report",
-    job => job.GenerateYesterdayReport(app.Services),
+    job => job.GenerateYesterdayReport(),
     "0 0 * * *" // Hər gün saat 00:00-da
 );
 app.UseMiddleware<GlobalExceptionHandling>();
