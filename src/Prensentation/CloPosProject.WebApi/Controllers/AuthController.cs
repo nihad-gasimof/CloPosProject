@@ -71,6 +71,25 @@ namespace CloPosProject.WebApi.Controllers
             }
             return StatusCode(result.StatusCode, result);
         }
+        [ProducesResponseType(typeof(Response<string>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response<string>), StatusCodes.Status400BadRequest)]
+        [HttpGet("ConfirmEmail")]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(token))
+            {
+                return BadRequest("İstifadəçi ID və ya Token çatışmır.");
+            }
+
+            var result = await _mediator.Send(new ConfirmEmailCommand(userId,token));
+
+            if (result.IsSuccess)
+            {
+                return Ok("Hesabınız uğurla təsdiqləndi!");
+            }
+
+            return BadRequest(result.Errors.FirstOrDefault());
+        }
         //[HttpPost("SeedRole")]
         //public async Task<SimpleResponse<string>> SeedRole()
         //{

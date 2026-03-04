@@ -1,9 +1,11 @@
 ﻿using CloPosProject.Application.Abstract.Authentication;
+using CloPosProject.Application.Abstract.Email;
 using CloPosProject.Application.Abstract.ICloudinary;
 using CloPosProject.Application.Abstract.Payment;
 using CloPosProject.Application.DTOs.Authentication;
 using CloPosProject.Infrastructure.Concurate.Authentication;
 using CloPosProject.Infrastructure.Concurate.Cloudinary;
+using CloPosProject.Infrastructure.Concurate.Email;
 using CloPosProject.Infrastructure.Concurate.Report;
 using CloPosProject.Infrastructure.Concurate.Reservation;
 using CloPosProject.Persistence.Concurate.Payment;
@@ -30,6 +32,7 @@ namespace CloPosProject.Infrastructure.InfrastructureServiceRegistration
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddHostedService<ReservationBackgroundJob>();
             services.AddScoped<IJwtGenerator, JwtGenerator>();
+            services.AddSingleton<IEmailService, EmailService>();
             services.AddScoped<ICloudinaryService, CloudinaryService>();
             _addJwtBearer(services, configuration);
 
