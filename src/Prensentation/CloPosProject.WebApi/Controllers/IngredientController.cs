@@ -26,7 +26,7 @@ namespace CloPosProject.WebApi.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(SimpleResponse<Guid>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(SimpleResponse<string>), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<SimpleResponse<Guid>>> Create([FromBody] CreateIngredientDto dto)
+        public async Task<ActionResult<SimpleResponse<Guid>>> Create([FromForm] CreateIngredientDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

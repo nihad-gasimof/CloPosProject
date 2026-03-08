@@ -90,11 +90,10 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 app.UseRouting();
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
     Authorization = new[] { new HangfireAuthorizationFilter() }

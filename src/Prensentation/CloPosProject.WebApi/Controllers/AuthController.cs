@@ -90,16 +90,16 @@ namespace CloPosProject.WebApi.Controllers
 
             return BadRequest(result.Errors.FirstOrDefault());
         }
-        //[HttpPost("SeedRole")]
-        //public async Task<SimpleResponse<string>> SeedRole()
-        //{
-        //    var roles=Enum.GetNames(typeof(Domain.Enums.Roles));
-        //    foreach (var role in roles)
-        //    {
-        //        await _roleManager.CreateAsync(new IdentityRole(role));           
-        //    }
-        //    return new SimpleResponse<string>("Ugurla rollar yaradildi",roles.First());
-        //}
+        [HttpPost("SeedRole")]
+        public async Task<SimpleResponse<string>> SeedRole()
+        {
+            var roles = Enum.GetNames(typeof(Domain.Enums.Roles));
+            foreach (var role in roles)
+            {
+                await _roleManager.CreateAsync(new IdentityRole(role));
+            }
+            return new SimpleResponse<string>("Ugurla rollar yaradildi", roles.First());
+        }
         //[ProducesResponseType(typeof(Response<AuthResponseDto>), StatusCodes.Status201Created)]
         //[ProducesResponseType(typeof(Response<AuthResponseDto>), StatusCodes.Status400BadRequest)]
         //[HttpPost("RefreshToken")]
