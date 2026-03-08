@@ -21,15 +21,14 @@ jobs:
     - name: Restore packages
       run: dotnet restore
 
-    - name: Build project
+    - name: Build
       run: dotnet build --configuration Release --no-restore
 
-    - name: Publish project
+    - name: Publish
       run: dotnet publish -c Release -o ./publish
 
-    # IIS-i offline etmək
     - name: Create app_offline.htm
-      run: echo "Application is updating..." > ./publish/app_offline.htm
+      run: echo "Updating site..." > ./publish/app_offline.htm
 
     - name: FTP Deploy
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -39,5 +38,4 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./publish/
         server-dir: /
-        protocol: ftp
-        port: 21
+        dangerous-clean-slate: true
