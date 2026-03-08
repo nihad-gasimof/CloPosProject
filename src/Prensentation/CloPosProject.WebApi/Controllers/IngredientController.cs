@@ -63,7 +63,7 @@ namespace CloPosProject.WebApi.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(SimpleResponse<List<IngredientResponseDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(SimpleResponse<List<IngredientResponseDto>>), StatusCodes.Status201Created)]
         public async Task<ActionResult<SimpleResponse<List<IngredientResponseDto>>>> GetAll([FromQuery] bool? isActive)
         {
             var result = await _mediator.Send(new GetAllIngredientsQuery(isActive));
