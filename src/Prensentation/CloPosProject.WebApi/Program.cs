@@ -122,3 +122,6 @@ public class HangfireAuthorizationFilter : IDashboardAuthorizationFilter
         return true; // Development üçün
     }
 }
+
+
+//asdasd
