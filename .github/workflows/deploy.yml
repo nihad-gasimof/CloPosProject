@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Repo clone
+    - name: Checkout repo
       uses: actions/checkout@v3
 
     - name: Setup .NET
@@ -18,14 +18,18 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
-    - name: Restore
+    - name: Restore packages
       run: dotnet restore
 
-    - name: Build
+    - name: Build project
       run: dotnet build --configuration Release --no-restore
 
-    - name: Publish
-      run: dotnet publish -c Release -o publish
+    - name: Publish project
+      run: dotnet publish -c Release -o ./publish
+
+    # IIS-i offline etmək
+    - name: Create app_offline.htm
+      run: echo "Application is updating..." > ./publish/app_offline.htm
 
     - name: FTP Deploy
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -33,5 +37,7 @@ jobs:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: publish/
+        local-dir: ./publish/
         server-dir: /
+        protocol: ftp
+        port: 21
