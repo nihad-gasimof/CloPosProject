@@ -27,9 +27,6 @@ jobs:
     - name: Publish
       run: dotnet publish -c Release -o ./publish
 
-    - name: Create app_offline.htm
-      run: echo "Updating site..." > ./publish/app_offline.htm
-
     - name: FTP Deploy
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
