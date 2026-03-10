@@ -111,7 +111,7 @@ RecurringJob.AddOrUpdate<DailyReportJob>(
     job => job.GenerateYesterdayReport(),
     "0 0 * * *" // Hər gün saat 00:00-da
 );
-app.UseMiddleware<GlobalExceptionHandling>();
+//app.UseMiddleware<GlobalExceptionHandling>();
 app.UseHttpsRedirection();
 
 app.UseCors("DefaultCorsPolicy");
