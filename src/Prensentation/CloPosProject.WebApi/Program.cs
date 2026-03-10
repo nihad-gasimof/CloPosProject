@@ -111,12 +111,15 @@ RecurringJob.AddOrUpdate<DailyReportJob>(
     job => job.GenerateYesterdayReport(),
     "0 0 * * *" // Hər gün saat 00:00-da
 );
-//app.UseMiddleware<GlobalExceptionHandling>();
+app.UseMiddleware<GlobalExceptionHandling>();
 app.UseHttpsRedirection();
 
 app.UseCors("DefaultCorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
+//Abi salam,localda db isdiyir deployda problem yaradir butun endpointler 500 atir
+//indi deploy ele yene yoxla
+
 
 app.MapControllers();
 
