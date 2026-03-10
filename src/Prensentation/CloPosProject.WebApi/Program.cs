@@ -87,6 +87,7 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+//builder.Services.AddScoped<DailyReportJob>();
 
 var app = builder.Build();
 app.UseRouting();
@@ -97,6 +98,7 @@ using (var scope = app.Services.CreateScope())
 }
 //avtomatik db ni qosur modelleri duzeldir db initializer
 // Configure the HTTP request pipeline.
+
 
 app.UseSwagger();
     app.UseSwaggerUI();
