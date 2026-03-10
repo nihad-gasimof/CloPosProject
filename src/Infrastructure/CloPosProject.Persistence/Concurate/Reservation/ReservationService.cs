@@ -165,7 +165,7 @@ namespace CloPosProject.Persistence.Concurate.Reservation
             return new SimpleResponse<List<ReservationResponse>>(responses);
         }
 
-        public async Task<SimpleResponse<List<AvailableTimeSlot>>> GetAvailableTimeSlotsAsync(Guid tableId, DateTime date, int durationMinutes)
+        public async Task<SimpleResponse<List<AvailableTimeSlot>>> GetAvailableTimeSlotsAsync(Guid tableId, DateTime date, int durationMinutes=30)
         {
             var table = await _context.Tables.FindAsync(tableId);
             if (table == null)

@@ -20,22 +20,33 @@ namespace CloPosProject.WebApi.Middleware.GlobalExceptionHandling
             }
             catch (Exception ex)
             {
-                var Response = new SimpleResponse<string>
+                var errors = new List<string>();
+                var currentException = ex;
+
+                while (currentException != null)
+                {
+                    errors.Add(currentException.Message);
+                    currentException = currentException.InnerException;
+                }
+
+                var response = new SimpleResponse<string>
                 {
                     Message = ex.Message,
+                    Errors = errors,
                     StatusCode = 500,
-                    Success = false,
+                    Success = false
                 };
 
                 if (ex is IBaseException baseException)
                 {
-                    Response.StatusCode = baseException.StatusCode;
-                    Response.Message = ex.Message;
+                    response.StatusCode = baseException.StatusCode;
                 }
+
                 context.Response.Clear();
                 context.Response.ContentType = "application/json";
-                context.Response.StatusCode = Response.StatusCode;
-                await context.Response.WriteAsJsonAsync(Response);
+                context.Response.StatusCode = response.StatusCode;
+
+                await context.Response.WriteAsJsonAsync(response);
             }
         }
 

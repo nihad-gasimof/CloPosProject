@@ -34,7 +34,6 @@ namespace CloPosProject.WebApi.Controllers
             var result = await _mediator.Send(new ConfirmReservationCommand(id));
             return Ok(result);
         }
-
         [HttpPost("{id:guid}/checkin")]
         [ProducesResponseType(typeof(SimpleResponse<string>), StatusCodes.Status200OK)]
         public async Task<ActionResult<SimpleResponse<string>>> CheckIn([FromRoute] Guid id)
