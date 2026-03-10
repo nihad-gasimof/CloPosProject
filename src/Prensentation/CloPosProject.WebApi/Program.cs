@@ -95,6 +95,7 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.Migrate();
 }
+//avtomatik db ni qosur modelleri duzeldir db initializer
 // Configure the HTTP request pipeline.
 
 app.UseSwagger();
